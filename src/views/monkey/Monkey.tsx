@@ -387,6 +387,14 @@ const Monkey: React.FC<MapState & MapDispatch> = (props) => {
                         type="text"
                         ref={inputEl}
                         onKeyDown={inputKeyDown}
+                        /* readOnly：输入框不可编辑，系统输入法(IME)不会在上面启动组词，
+                           避免拼音输入法拦截按键/弹出候选窗等 bug；keydown 事件照常触发 */
+                        onCompositionStart={(evt) => evt.preventDefault()}
+                        autoComplete="off"
+                        autoCapitalize="off"
+                        autoCorrect="off"
+                        spellCheck={false}
+                        readOnly
                         onBlur={() => {
                             setIsTyping(false);
                             // setIsCaretFlash(false);

@@ -22,4 +22,5 @@ export default [
     { name: 'dracula', bgColor: '#282a36', textColor: '#bd93f9' },
     { name: 'toxic', bgColor: '#3f4241', textColor: '#d0df00' },
     { name: '毛玻璃', bgColor: '#2b3a5c', textColor: '#7ee8fa' },
+    { name: '毛玻璃黑', bgColor: '#101216', textColor: '#9bf0ff' },
 ];

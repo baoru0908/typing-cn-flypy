@@ -1,0 +1,71 @@
+/* 毛玻璃主题：渐变底色 + 半透明毛玻璃面板 */
+:root {
+    /* 全局主色 */
+    --primary-color: #7ee8fa;
+    /* 成功色 */
+    --success-color: #5df2c0;
+    /* 错误色 */
+    --error-color: #ff7a9c;
+
+    --bg-color: #26334f;
+    --head-text-color: #eef4ff;
+
+    --home-window-bg-color: rgba(255, 255, 255, 0.12);
+    --home-window-text-color: #eef4ff;
+    --home-window-text-sub-color: rgba(238, 244, 255, 0.6);
+    --home-window-text-acting-bg-color: rgba(255, 255, 255, 0.25);
+    --success-opacity: inherit;
+    --error-opacity: inherit;
+
+    --home-input-focus-color: rgba(255, 255, 255, 0.2);
+    --home-countdown-bg-color: rgba(255, 255, 255, 0.15);
+    --home-countdown-text-color: #eef4ff;
+    --home-reload-btn-bg-color: rgba(126, 232, 250, 0.75);
+    --home-reload-btn-focus-color: rgba(255, 255, 255, 0.2);
+    --home-reload-btn-text-color: #10314a;
+
+    --word-count-checked-color: #7ee8fa;
+    --monkey-caret-color: #7ee8fa;
+    --monkey-sub-color: rgba(238, 244, 255, 0.55);
+    --monkey-error-color: #ff7a9c;
+}
+
+/* 渐变底：给毛玻璃面板提供可模糊的背景 */
+body {
+    --body-back-image: radial-gradient(1100px 700px at 18% 8%, rgba(94, 138, 201, 0.85) 0%, rgba(94, 138, 201, 0) 60%),
+        radial-gradient(900px 650px at 82% 92%, rgba(140, 100, 190, 0.75) 0%, rgba(140, 100, 190, 0) 55%),
+        linear-gradient(135deg, #1c2740 0%, #2b3a5c 55%, #37517e 100%);
+}
+
+/* 顶栏毛玻璃 */
+.app-header {
+    background: rgba(255, 255, 255, 0.07) !important;
+    backdrop-filter: blur(16px) saturate(150%);
+    -webkit-backdrop-filter: blur(16px) saturate(150%);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: 14px;
+    padding: 6px 10px;
+}
+
+/* 弹窗毛玻璃 */
+.ant-modal-content {
+    background: rgba(30, 42, 66, 0.55) !important;
+    backdrop-filter: blur(24px) saturate(160%);
+    -webkit-backdrop-filter: blur(24px) saturate(160%);
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    border-radius: 16px !important;
+    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.35) !important;
+}
+
+/* 弹窗内文本域毛玻璃 */
+.header-modal-setting textarea {
+    background: rgba(255, 255, 255, 0.08) !important;
+    color: #eef4ff !important;
+    border-color: rgba(255, 255, 255, 0.2) !important;
+}
+
+/* 词数选择按钮组毛玻璃 */
+.Monkey .word-count-radio .ant-radio-button-wrapper {
+    background: rgba(255, 255, 255, 0.06);
+    border-radius: 8px;
+}

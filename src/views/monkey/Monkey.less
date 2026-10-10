@@ -23,9 +23,13 @@
         height: 30px;
         border-radius: 10px;
         background-color: var(--monkey-caret-color);
+        /* 发光 + 更跟手的移动动画 */
+        box-shadow:
+            0 0 6px var(--monkey-caret-color),
+            0 0 16px var(--monkey-caret-color);
         animation-iteration-count: infinite;
         animation-duration: 1s;
-        transition: transform 250ms;
+        transition: transform 120ms cubic-bezier(0.2, 0.8, 0.3, 1);
         transform: translate3d(26px, 7px, 0);
         &.flash {
             animation-name: caretFlash;
@@ -60,6 +64,11 @@
             &.correct {
                 color: var(--primary-color);
                 opacity: 1;
+                /* 上词弹跳动画 */
+                animation: wordCommit 220ms ease-out;
+                .label {
+                    text-shadow: 0 0 6px;
+                }
             }
             &.wrong {
                 color: var(--monkey-error-color);
@@ -80,10 +89,16 @@
                 &.correct {
                     color: var(--primary-color);
                     opacity: 1;
+                    /* 正确发光 + 弹跳 */
+                    text-shadow: 0 0 8px;
+                    animation: letterPop 160ms ease-out;
                 }
                 &.wrong {
                     color: var(--monkey-error-color);
                     opacity: 1;
+                    /* 错误红色发光 + 抖动 */
+                    text-shadow: 0 0 8px;
+                    animation: letterShake 150ms ease-in-out;
                 }
             }
         }
@@ -129,5 +144,42 @@
     }
     50% {
         opacity: 1;
+    }
+}
+
+@keyframes letterPop {
+    0% {
+        transform: scale(1);
+    }
+    40% {
+        transform: scale(1.35);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+@keyframes letterShake {
+    0%,
+    100% {
+        transform: translateX(0);
+    }
+    25% {
+        transform: translateX(-3px);
+    }
+    75% {
+        transform: translateX(3px);
+    }
+}
+
+@keyframes wordCommit {
+    0% {
+        transform: scale(1);
+    }
+    45% {
+        transform: scale(1.08);
+    }
+    100% {
+        transform: scale(1);
     }
 }

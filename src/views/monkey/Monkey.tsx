@@ -85,14 +85,28 @@ const Monkey: React.FC<MapState & MapDispatch> = (props) => {
             const coordinate = coordinateRef.current;
             // 越界保护：结果已弹出/词组已打完时忽略后续按键
             if (!wordArr[coordinate[0]]) return;
-            const isNewWordInputing =
-                userInput === '' || userInput.charAt(userInput.length - 1) === ' ';
+            // 是否真正执行了空格上词
+            let spaceCommit = false;
             let newCoordinate: number[];
             if (keyCode === SPACE_CODE) {
-                if (isNewWordInputing) {
-                    newCoordinate = coordinate;
+                if (inputMode === '2') {
+                    // 小鹤双拼：编码打满才上词；未打满的空格一律忽略，
+                    // 防止误触空格把当前词/下一个词跳过判错
+                    if (coordinate[1] >= wordArr[coordinate[0]].letterArr.length) {
+                        spaceCommit = true;
+                        newCoordinate = [coordinate[0] + 1, 0];
+                    } else {
+                        newCoordinate = coordinate;
+                    }
                 } else {
-                    newCoordinate = [coordinate[0] + 1, 0];
+                    const isNewWordInputing =
+                        userInput === '' || userInput.charAt(userInput.length - 1) === ' ';
+                    if (isNewWordInputing) {
+                        newCoordinate = coordinate;
+                    } else {
+                        spaceCommit = true;
+                        newCoordinate = [coordinate[0] + 1, 0];
+                    }
                 }
             } else {
                 if (coordinate[1] >= wordArr[coordinate[0]].letterArr.length) {
@@ -115,8 +129,8 @@ const Monkey: React.FC<MapState & MapDispatch> = (props) => {
                     letterObj.isCorrect = inputVal === letterObj.letter;
                     _wordArr[coordinate[0]].letterArr[coordinate[1]] = letterObj;
                 }
-                if (keyCode === SPACE_CODE && !isNewWordInputing) {
-                    // 是否没有输入完单词就空格跳过
+                if (spaceCommit) {
+                    // 空格上词：未输入完的词组按跳过处理（仅全拼模式会出现）
                     if (_wordArr[coordinate[0]].letterArr.some((l) => l.isCorrect === null)) {
                         _wordArr[coordinate[0]].isSkip = true;
                         _wordArr[coordinate[0]].isCorrect = false;
@@ -165,13 +179,16 @@ const Monkey: React.FC<MapState & MapDispatch> = (props) => {
                 return _wordArr;
             });
             setUserInput((v) => {
-                if (keyCode === SPACE_CODE && (v === '' || v.charAt(v.length - 1) === ' ')) {
-                    return v;
+                if (keyCode === SPACE_CODE) {
+                    // 未真正上词的空格不记录到输入
+                    if (!spaceCommit || v === '' || v.charAt(v.length - 1) === ' ') {
+                        return v;
+                    }
                 }
                 return v + inputVal;
             });
         },
-        [userInput, wordArr]
+        [userInput, wordArr, inputMode]
     );
     const backspaceFunc = useCallback(() => {
         const deleteChar = userInput.charAt(userInput.length - 1);
@@ -412,7 +429,7 @@ const Monkey: React.FC<MapState & MapDispatch> = (props) => {
                         <div>点击词块进入输入状态</div>
                         <div>
                             {inputMode === '2'
-                                ? '输入正确的小鹤双拼编码，然后空格'
+                                ? '输入小鹤双拼编码，打满自动上词（空格也可上词）'
                                 : '输入正确的拼音字母，然后空格'}
                         </div>
                         <div>

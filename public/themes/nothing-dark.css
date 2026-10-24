@@ -1,0 +1,48 @@
+/* nothing 暗色主题：按 Nothing 设计语言参考手册
+ * Foundation：Pure Black 主文本与深色背景 / Window Grey 次要文本 / Pure White 反白
+ * Primary：N-Red #C8102E（强调色，暗底下保持辨识度）
+ * 规范：禁渐变、禁投影
+ */
+:root {
+    /* 全局主色 */
+    --primary-color: #e0243e;
+    /* 成功色 */
+    --success-color: #e0243e;
+    /* 错误色 */
+    --error-color: #e0243e;
+
+    --bg-color: #0d0d0d;
+    --head-text-color: #ffffff;
+
+    --home-window-bg-color: #161616;
+    --home-window-text-color: #ffffff;
+    --home-window-text-sub-color: #b1b3b3;
+    --home-window-text-acting-bg-color: rgba(255, 255, 255, 0.12);
+    --success-opacity: inherit;
+    --error-opacity: inherit;
+
+    --home-input-focus-color: rgba(255, 255, 255, 0.1);
+    --home-countdown-bg-color: #232323;
+    --home-countdown-text-color: #ffffff;
+    --home-reload-btn-bg-color: #232323;
+    --home-reload-btn-focus-color: rgba(255, 255, 255, 0.12);
+    --home-reload-btn-text-color: #ffffff;
+
+    --word-count-checked-color: #e0243e;
+    --monkey-caret-color: #e0243e;
+    --monkey-sub-color: #b1b3b3;
+    --monkey-error-color: #e0243e;
+}
+
+/* 暗色 nothing：去掉阴影，仅保留平面与分隔 */
+.app-header {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+    background-color: transparent;
+    box-shadow: none;
+}
+
+.Monkey .word-count-radio .ant-radio-button-wrapper,
+.Code .code-lang-radio .ant-radio-button-wrapper,
+.English .word-count-radio .ant-radio-button-wrapper {
+    background-color: transparent;
+}

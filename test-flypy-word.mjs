@@ -1,22 +1,25 @@
 // 用项目内安装的 pinyin-pro + flypy.ts 转换器，对真实词库做端到端测试
-// 运行: node --experimental-strip-types test-flypy-mts.mjs  （Node 22 类型剥离）
+// 运行: node --experimental-strip-types test-flypy-word.mjs  （Node 22 类型剥离）
 import { getFlypy, toFlypy } from './src/utils/flypy.ts';
 
+// 期望值按 rime 官方 double_pinyin_flypy.schema.yaml 的 speller algebra 推导：
+// https://github.com/rime/rime-double-pinyin/blob/master/double_pinyin_flypy.schema.yaml
+// 例：you -> y + ou(Z) = yz；jian -> j + ian(M) = jm；chang -> ch(I) + ang(H) = ih
 const cases = [
-    ['邮件', 'ybjm'],
-    ['离开', 'lkkl'],
-    ['准备', 'vbbz'],
-    ['庆祝', 'qkvz'],
+    ['邮件', 'yzjm'],
+    ['离开', 'likd'],
+    ['准备', 'vybw'],
+    ['庆祝', 'qkvu'],
     ['宿舍', 'suue'],
     ['注意', 'vuyi'],
-    ['非常', 'fkih'],
-    ['家庭', 'jatm'],
-    ['去年', 'qnnm'],
+    ['非常', 'fwih'],
+    ['家庭', 'jxtk'],
+    ['去年', 'qunm'],
     ['真爱', 'vfai'],
     ['阳光', 'yhgl'],
-    ['永远', 'yyyr'],
+    ['永远', 'ysyr'],
     ['新闻', 'xbwf'],
-    ['长安', 'ihaj'],
+    ['长安', 'ihan'],
 ];
 
 let fail = 0;

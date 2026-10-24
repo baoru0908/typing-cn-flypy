@@ -268,11 +268,7 @@ const Monkey: React.FC<MapState & MapDispatch> = (props) => {
             // 避免字母被当作多余字母插入当前词的显示区
             const coord = coordinateRef.current;
             const curWord = wordArr[coord[0]];
-            if (
-                inputMode === '2' &&
-                curWord &&
-                coord[1] >= curWord.letterArr.length
-            ) {
+            if (inputMode === '2' && curWord && coord[1] >= curWord.letterArr.length) {
                 inputForwardFunc(SPACE_CODE, ' ');
             }
             inputForwardFunc(evt.keyCode, evt.key);

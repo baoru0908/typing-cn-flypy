@@ -58,7 +58,12 @@ if (favicon) {
 }
 
 // 检查残留外部引用（不含 data: 与 http）
-const leftovers = [...html.matchAll(/(?:src|href)="([^"]+)"/g)]
+// 说明：内联 JS 里 Vite 的预加载助手带有模板串 href="${r}"，那是 JS 字符串拼接、
+// 不是真实标签属性，因此只扫 <script> 之外的标记区，避免误报。
+const markup = html
+    .replace(/<script[\s\S]*?<\/script>/gi, '')
+    .replace(/<style[\s\S]*?<\/style>/gi, '');
+const leftovers = [...markup.matchAll(/(?:src|href)="([^"]+)"/g)]
     .map((m) => m[1])
     .filter((u) => !/^(data:|https?:|#)/.test(u));
 if (leftovers.length) {

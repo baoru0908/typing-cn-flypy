@@ -10,7 +10,7 @@ import list from './config';
 
 export default list;
 
-export const changeTheme = (theme: typeof list[0]) => {
+export const changeTheme = (theme: (typeof list)[0]) => {
     // const temp = { ...themeObj };
     site.setSiteIcon(theme.bgColor, theme.textColor);
     // delete temp.name;
@@ -28,5 +28,8 @@ export const changeTheme = (theme: typeof list[0]) => {
         return;
     }
     const oldUrl = themeLinkEl.getAttribute('href') || '';
-    themeLinkEl.setAttribute('href', oldUrl.substring(0, oldUrl.lastIndexOf('/')) + `/${themeKey}.css`);
+    themeLinkEl.setAttribute(
+        'href',
+        oldUrl.substring(0, oldUrl.lastIndexOf('/')) + `/${themeKey}.css`
+    );
 };

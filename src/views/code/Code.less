@@ -1,0 +1,25 @@
+.Code {
+    margin-top: 50px;
+    .code-lang-radio {
+        padding: 0 0 30px 30px;
+        .ant-radio-button-wrapper {
+            color: var(--head-text-color);
+            background-color: transparent;
+            border: none;
+            opacity: 0.5;
+            &.ant-radio-button-wrapper-checked {
+                color: var(--word-count-checked-color);
+            }
+            &:not(:first-child)::before {
+                background-color: transparent;
+                color: var(--head-text-color);
+                content: '/';
+            }
+        }
+    }
+    .TypingArea__text {
+        font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+        font-size: 18px;
+        line-height: 1.9;
+    }
+}

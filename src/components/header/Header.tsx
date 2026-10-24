@@ -1,10 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Row, Col, Button, Radio, Modal, Tabs, Input, Tooltip } from 'antd';
-import {
-    SettingOutlined,
-    AppstoreOutlined,
-    BellOutlined,
-} from '@ant-design/icons';
+import { SettingOutlined, AppstoreOutlined, BellOutlined } from '@ant-design/icons';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 import './Header.less';
@@ -14,11 +10,23 @@ import WORDS from '@/words';
 
 import themeList, { changeTheme } from '@/themes';
 
-// 小鹤双拼版：仅保留模式2(计时)，首位为首页路由配置
+// 小鹤双拼版：模式入口与各页可见的头部配置
+// 顺序：[主题, 词组设置, UI尺寸, 输入方案]
 const ROUTE_HEADER_CONFIG: Record<string, (1 | 0)[]> = {
     '/': [1, 1, 0, 1],
     '/monkey': [1, 1, 0, 1],
+    '/english': [1, 0, 0, 0],
+    '/code': [1, 0, 0, 0],
+    '/custom': [1, 0, 0, 0],
 };
+
+// 顶栏模式入口：label 即显示文字，不再带「模式2(计时)」这类编号说明
+const MODE_ROUTES: { route: string; label: string }[] = [
+    { route: 'monkey', label: '中文双拼' },
+    { route: 'english', label: '英文' },
+    { route: 'code', label: '代码' },
+    { route: 'custom', label: '自定义' },
+];
 
 const reg = /^[\u2E80-\u9FFF]+$/;
 const defaultWordStr = WORDS.map((item) => item.label).join('|');
@@ -107,16 +115,22 @@ const Header: React.FC<MapState & MapDispatch> = (props) => {
 
     return (
         <div className="app-header">
-            <Row>
+            <Row className="app-header__modes">
                 <Col flex="auto">
-                    <Button
-                        tabIndex={-1}
-                        type="link"
-                        icon={<BellOutlined />}
-                        onClick={() => go('monkey')}
-                    >
-                        模式2(计时)
-                    </Button>
+                    {MODE_ROUTES.map((mode) => (
+                        <Button
+                            key={mode.route}
+                            tabIndex={-1}
+                            type="link"
+                            className={
+                                pathname === `/${mode.route}` ? 'mode-btn active' : 'mode-btn'
+                            }
+                            icon={<BellOutlined />}
+                            onClick={() => go(mode.route)}
+                        >
+                            {mode.label}
+                        </Button>
+                    ))}
                 </Col>
             </Row>
             <Row style={{ marginTop: '10px' }}>

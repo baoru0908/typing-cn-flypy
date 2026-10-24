@@ -1,5 +1,17 @@
 .app-header {
     padding: 10px;
+    &__modes {
+        .mode-btn {
+            padding: 0 14px;
+            font-weight: 500;
+            &.active {
+                color: var(--primary-color);
+                span {
+                    color: var(--primary-color);
+                }
+            }
+        }
+    }
     .ant-btn-link,
     .radio-text,
     .ant-radio-wrapper {

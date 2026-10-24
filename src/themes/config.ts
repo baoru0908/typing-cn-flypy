@@ -23,4 +23,6 @@ export default [
     { name: 'toxic', bgColor: '#3f4241', textColor: '#d0df00' },
     { name: '毛玻璃', bgColor: '#2b3a5c', textColor: '#7ee8fa' },
     { name: '毛玻璃黑', bgColor: '#101216', textColor: '#9bf0ff' },
+    { name: 'nothing', bgColor: '#f4f3f1', textColor: '#000000' },
+    { name: 'nothing dark', bgColor: '#0d0d0d', textColor: '#ffffff' },
 ];

@@ -14,7 +14,20 @@ const ROOT = Path.join(__dirname, '..');
 const DIST = Path.join(ROOT, 'dist');
 const BRANCH = 'gh-pages';
 
-const run = (cmd, cwd) => execSync(cmd, { cwd, stdio: 'inherit' });
+/**
+ * 本机全局 git 配置里有 url.https://github.com/.insteadof 规则，
+ * 会把任何 git@github.com: 地址改写成 https://。14MB 字体走 HTTPS 代理会 502，
+ * 所以推送的子进程要忽略全局配置、直接用 SSH（SSH key 走 ~/.ssh，不受影响）。
+ * user.name / user.email 下面用 -c 显式传给 commit，不依赖全局配置。
+ */
+const NULL_CONFIG = process.platform === 'win32' ? 'NUL' : '/dev/null';
+
+const run = (cmd, cwd) =>
+    execSync(cmd, {
+        cwd,
+        stdio: 'inherit',
+        env: { ...process.env, GIT_CONFIG_GLOBAL: NULL_CONFIG },
+    });
 const capture = (cmd, cwd) => execSync(cmd, { cwd, encoding: 'utf8' }).trim();
 
 /**

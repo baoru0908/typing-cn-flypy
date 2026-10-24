@@ -4,7 +4,7 @@ const pinyin = require('chinese-to-pinyin');
 
 const wordsStr = require('../words.json').words;
 
-const wordsTemplate = `${__dirname}/../template/words.mustache`;
+const wordsTemplate = `${__dirname}/template/words.mustache`;
 const wordsFile = `${__dirname}/../src/words.ts`;
 
 const readTempAndWriteFile = (template, filePath, tempObj = {}) => {

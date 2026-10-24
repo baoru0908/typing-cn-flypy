@@ -1,23 +1,25 @@
 {
-    "name": "typing-cn",
-    "description": "Chinese type test with PinYin.",
+    "name": "cranetype",
+    "description": "鹤键 CraneType —— 中文全拼 / 小鹤双拼打字练习，含英文、代码与自定义文本四种模式，40 套主题",
     "version": "20231127a",
-    "packageManager": "pnpm@6.27.1",
+    "packageManager": "npm@10.9.7",
+    "homepage": "https://baoru0908.github.io/typing-cn-flypy/",
     "repository": {
-        "url": "https://gitee.com/barneyZhao/typing-cn.git",
-        "url-github": "https://github.com/BarneyZhao/typing-cn.git"
+        "type": "git",
+        "url": "https://github.com/baoru0908/typing-cn-flypy.git"
     },
     "scripts": {
         "dev": "vite",
         "build": "tsc && vite build",
-        "build-single": "tsc && vite build --config vite.config.single.ts && node scripts/pack-single.js",
         "build-nobase": "tsc && vite build --mode nobase",
+        "build-single": "tsc && vite build --config vite.config.single.ts && node scripts/pack-single.js",
         "preview": "vite preview",
-        "update-version": "node scripts/updateVersion.js",
         "deploy": "npm run build && node scripts/deploy.js",
+        "test": "node --experimental-strip-types scripts/test-flypy.mjs",
         "lint": "eslint --ext .jsx,.js,.tsx,.ts src",
-        "prettier": "prettier --write 'src/**/*.{js,jsx,ts,tsx,scss}'",
-        "word": "node scripts/generateWords.js"
+        "prettier": "prettier --write 'src/**/*.{js,jsx,ts,tsx,less}'",
+        "word": "node scripts/generateWords.js",
+        "update-version": "node scripts/updateVersion.js"
     },
     "dependencies": {
         "@ant-design/icons": "^4.7.0",

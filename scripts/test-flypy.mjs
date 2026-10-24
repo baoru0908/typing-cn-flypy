@@ -1,6 +1,13 @@
 // 用项目内安装的 pinyin-pro + flypy.ts 转换器，对真实词库做端到端测试
-// 运行: node --experimental-strip-types test-flypy-word.mjs  （Node 22 类型剥离）
-import { getFlypy, toFlypy } from './src/utils/flypy.ts';
+// 运行: node --experimental-strip-types scripts/test-flypy.mjs  （Node 22 类型剥离）
+import FS from 'node:fs';
+import Path from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+// 用文件自身位置定位项目根，这样从任意目录调用都能跑
+const ROOT = Path.resolve(Path.dirname(fileURLToPath(import.meta.url)), '..');
+
+const { getFlypy } = await import(Path.join(ROOT, 'src/utils/flypy.ts'));
 
 // 期望值按 rime 官方 double_pinyin_flypy.schema.yaml 的 speller algebra 推导：
 // https://github.com/rime/rime-double-pinyin/blob/master/double_pinyin_flypy.schema.yaml
@@ -32,8 +39,7 @@ for (const [word, expect] of cases) {
 }
 
 // 全词库扫描：双拼模式下每个词组的编码必须是纯小写字母且长度 = 2×字数
-const fs = await import('node:fs');
-const wordsTs = fs.readFileSync('./src/words.ts', 'utf8');
+const wordsTs = FS.readFileSync(Path.join(ROOT, 'src/words.ts'), 'utf8');
 const labels = [...wordsTs.matchAll(/label: '([^']+)'/g)].map((m) => m[1]);
 let bad = 0;
 for (const label of labels) {
@@ -43,5 +49,7 @@ for (const label of labels) {
         console.log('BAD', label, code);
     }
 }
-console.log(`抽样 ${cases.length} 条，词库共 ${labels.length} 个词组，编码异常 ${bad} 个，抽样失败 ${fail}`);
+console.log(
+    `抽样 ${cases.length} 条，词库共 ${labels.length} 个词组，编码异常 ${bad} 个，抽样失败 ${fail}`
+);
 process.exit(fail || bad ? 1 : 0);

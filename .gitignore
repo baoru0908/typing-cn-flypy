@@ -9,9 +9,8 @@ lerna-debug.log*
 
 node_modules
 dist
+dist-*
 dist-ssr
-dist-single
-dist-check
 *.local
 report.html
 
@@ -19,7 +18,7 @@ report.html
 # 单文件版由 scripts/pack-single.js 写到仓库外（../typing-cn-小鹤双拼.html），
 # 万一被复制回根目录也不该进版本控制
 typing-cn-*.html
-# npm run online / online2 的部署输出
+# 旧的 gitee pages 部署输出目录（现在改用 gh-pages 分支）
 docs/
 docs-nobase/
 

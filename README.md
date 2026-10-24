@@ -155,8 +155,10 @@ zhon zheng   zhou mo   tao jian
 ```bash
 npm install
 npm run dev          # 开发服务器
-npm run build        # 常规构建 → dist/
+npm run build        # 常规构建 → dist/（base 为 /typing-cn-flypy/）
+npm run build-nobase # 根域名构建（base 为 /）
 npm run build-single # 单文件构建 → ../typing-cn-小鹤双拼.html
+npm run deploy       # 构建并发布到 GitHub Pages
 npm run lint         # eslint 检查
 
 # 双拼编码测试
@@ -173,6 +175,27 @@ node scripts/analyze-font-slices.js # 打印分片命中数与 base64 体积估�
 ```
 
 打开后默认即中文双拼练习，照着词块下方的编码敲键（两键一字），空格可上词（打满 4 键直接敲下一个词也会自动上词）。
+
+## 部署
+
+线上地址：**https://baoru0908.github.io/typing-cn-flypy/**
+
+用的是 GitHub Pages 的项目站点，产物发布在 `gh-pages` 分支（单提交、强制推送，分支上永远只有一个 commit，不会因为反复发布而堆历史）。
+
+```bash
+npm run deploy       # build → 推送到 gh-pages
+```
+
+### 三条必须注意的规则
+
+**1. `base` 必须与仓库名逐字一致。** `vite.config.ts` 里的 `PAGES_REPO` 写的是 `typing-cn-flypy`。改了仓库名而忘了改它，`/assets`、`/fonts`、`/themes` 会全部 404，页面白屏。
+
+**2. `public/` 下的 CSS 必须用相对路径。** `public/` 是原样拷贝，Vite **不会**改写里面的 URL —— 只有 `index.html` 里的绝对路径会被加上 base 前缀。所以 `public/fonts/shs.css` 里写成 `url('./shs/x.woff2')`，不能写 `url('/fonts/shs/x.woff2')`，否则子路径部署时字体全部 404、静默回落到系统字体（页面看着没坏，但用的不是思源黑体）。
+
+**3. 部署到根域名要换 base。** 挂到 Cloudflare Pages / 对象存储 / 自己的域名时用 `npm run build-nobase`，mode 不是 `production`，base 退回 `/`，产物路径变成 `/assets/...`。
+
+> 首次部署后需要在仓库 Settings → Pages 把 Source 设为 `gh-pages` 分支 / `(root)`。本仓库已配好。
+> 目录里的 `public/.nojekyll` 是为了让 Pages 跳过 Jekyll 处理，不要删。
 
 ## 工程说明
 

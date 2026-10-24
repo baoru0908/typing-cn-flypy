@@ -1,7 +1,200 @@
+@import './styles/fonts.less';
+@import './styles/tokens.less';
+
+/* ==========================================================================
+ * 全局基座
+ * ========================================================================== */
+
+* {
+    box-sizing: border-box;
+}
+
+html {
+    /* 禁止合成加粗/斜体：楷体只有 400，合成加粗会糊掉笔锋 */
+    font-synthesis: none;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    -webkit-text-size-adjust: 100%;
+}
+
 body {
     background-color: var(--bg-color);
     background-image: var(--body-back-image);
+    background-attachment: fixed;
     margin: 0;
     padding: 0;
-    transition: background-color 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
+    color: var(--ui-text);
+    font-family: var(--ui-font-ui);
+    font-size: 14px;
+    line-height: 1.7;
+    letter-spacing: var(--track-ui);
+    font-feature-settings: 'kern' 1, 'liga' 1, 'calt' 1;
+    font-variant-numeric: tabular-nums;
+    transition:
+        background-color 0.3s var(--ease-in-out),
+        color 0.3s var(--ease-in-out);
+}
+
+::selection {
+    background: var(--ui-accent-soft);
+    color: var(--ui-text);
+}
+
+:focus-visible {
+    outline: 2px solid var(--ui-accent);
+    outline-offset: 2px;
+    border-radius: var(--ui-radius-xs);
+}
+
+/* 细滚动条，避免在深色主题下出现亮白条 */
+* {
+    scrollbar-width: thin;
+    scrollbar-color: var(--ui-line-strong) transparent;
+}
+*::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+*::-webkit-scrollbar-thumb {
+    background: var(--ui-line-strong);
+    border-radius: 8px;
+}
+*::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+/* ==========================================================================
+ * 通用版式工具
+ * ========================================================================== */
+
+.ui-container {
+    width: 100%;
+    max-width: var(--ui-container);
+    margin: 0 auto;
+    padding: 0 32px;
+}
+
+.ui-measure {
+    width: 100%;
+    max-width: var(--ui-measure);
+    margin: 0 auto;
+}
+
+@media (max-width: 768px) {
+    .ui-container {
+        padding: 0 18px;
+    }
+}
+
+/* ==========================================================================
+ * antd 组件对齐主题（antd 4 没有 CSS 变量主题，只能定向覆盖）
+ * ========================================================================== */
+
+.ant-modal-content,
+.ant-modal-header,
+.ant-modal-body,
+.ant-modal-footer {
+    background: transparent;
+}
+
+.ant-modal-content {
+    background: var(--ui-surface-2) !important;
+    border: 1px solid var(--ui-line);
+    border-radius: var(--ui-radius-lg) !important;
+    box-shadow: 0 40px 90px -40px rgba(0, 0, 0, 0.65);
+    color: var(--ui-text);
+}
+
+.ant-modal-mask {
+    background: rgba(0, 0, 0, 0.55);
+    backdrop-filter: blur(3px);
+}
+
+.ant-modal-close {
+    color: var(--ui-faint) !important;
+    border-radius: var(--ui-radius-sm);
+    &:hover {
+        color: var(--ui-text) !important;
+        background: var(--ui-surface-3);
+    }
+}
+
+.ant-tabs-tab {
+    color: var(--ui-dim) !important;
+    &:hover {
+        color: var(--ui-text) !important;
+    }
+    &.ant-tabs-tab-active .ant-tabs-tab-btn {
+        color: var(--ui-accent) !important;
+    }
+}
+.ant-tabs-ink-bar {
+    background: var(--ui-accent) !important;
+}
+.ant-tabs-top > .ant-tabs-nav::before {
+    border-bottom-color: var(--ui-line) !important;
+}
+
+.ant-input,
+.ant-input-affix-wrapper,
+textarea.ant-input {
+    background: var(--ui-surface) !important;
+    border-color: var(--ui-line) !important;
+    color: var(--ui-text) !important;
+    border-radius: var(--ui-radius) !important;
+    font-family: var(--ui-font-ui) !important;
+    line-height: 1.9 !important;
+    &::placeholder {
+        color: var(--ui-ghost) !important;
+    }
+    &:hover,
+    &:focus {
+        border-color: var(--ui-accent-line) !important;
+        box-shadow: none !important;
+    }
+}
+.ant-input[disabled] {
+    color: var(--ui-dim) !important;
+    background: var(--ui-surface) !important;
+    opacity: 0.85;
+}
+
+.ant-radio-wrapper {
+    color: var(--ui-dim) !important;
+    &:hover {
+        color: var(--ui-text) !important;
+    }
+}
+.ant-radio-inner {
+    background: transparent !important;
+    border-color: var(--ui-line-strong) !important;
+}
+.ant-radio-checked .ant-radio-inner {
+    border-color: var(--ui-accent) !important;
+    &::after {
+        background: var(--ui-accent) !important;
+    }
+}
+
+.ant-btn {
+    font-family: var(--ui-font-ui);
+    border-radius: var(--ui-radius-sm);
+}
+.ant-btn-primary {
+    background: var(--ui-accent) !important;
+    border-color: var(--ui-accent) !important;
+    color: var(--ui-bg) !important;
+    font-weight: 600;
+}
+
+.ant-tooltip-inner {
+    background: var(--ui-surface-3) !important;
+    color: var(--ui-text) !important;
+    font-size: 12px;
+    border-radius: var(--ui-radius-sm);
+    box-shadow: none;
+}
+.ant-tooltip-arrow-content {
+    background: var(--ui-surface-3) !important;
 }

@@ -10,6 +10,7 @@
     "scripts": {
         "dev": "vite",
         "build": "tsc && vite build",
+        "build-single": "tsc && vite build --config vite.config.single.ts && node scripts/pack-single.js",
         "build-nobase": "tsc && vite build --mode nobase",
         "preview": "vite preview",
         "update-version": "node scripts/updateVersion.js",

@@ -1,13 +1,85 @@
 .TypeResult {
-    .label {
-        font-size: 20px;
-        line-height: 20px;
-        color: var(--head-text-color);
-        opacity: 0.5;
+    display: flex;
+    align-items: center;
+    gap: 44px;
+    padding: 22px 28px;
+    background: var(--ui-surface);
+    border: 1px solid var(--ui-line);
+    border-radius: var(--ui-radius-lg);
+    animation: resultIn 0.28s var(--ease-out) both;
+
+    &__head {
+        font-size: 11px;
+        letter-spacing: 0.14em;
+        color: var(--ui-ghost);
+        text-transform: uppercase;
+        writing-mode: horizontal-tb;
     }
-    .show-data {
-        font-size: 44px;
-        line-height: 44px;
-        color: var(--primary-color);
+
+    &__row {
+        display: flex;
+        align-items: center;
+        gap: 44px;
+    }
+
+    &__cell {
+        display: flex;
+        flex-direction: column;
+        line-height: 1;
+    }
+
+    &__value {
+        font-size: 34px;
+        font-weight: 650;
+        letter-spacing: -0.02em;
+        color: var(--ui-text);
+        font-variant-numeric: tabular-nums;
+    }
+
+    &__cell.is-primary &__value {
+        color: var(--ui-accent);
+        font-size: 42px;
+    }
+
+    &__label {
+        margin-top: 10px;
+        font-size: 11px;
+        letter-spacing: 0.1em;
+        color: var(--ui-faint);
+        text-transform: uppercase;
+    }
+}
+
+@keyframes resultIn {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@media (max-width: 768px) {
+    .TypeResult {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 18px;
+        padding: 18px 20px;
+
+        &__row {
+            width: 100%;
+            justify-content: space-between;
+            gap: 18px;
+        }
+
+        &__value {
+            font-size: 26px;
+        }
+
+        &__cell.is-primary &__value {
+            font-size: 32px;
+        }
     }
 }

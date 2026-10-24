@@ -1,35 +1,6 @@
+/* 英文模式：版式由 App.less 的 .page / .chips 提供，这里只保留必要的微调 */
 .English {
-    margin-top: 50px;
-    .word-count-radio {
-        display: flex;
-        align-items: center;
-        gap: 18px;
-        padding: 0 0 30px 30px;
-        .ant-radio-button-wrapper {
-            color: var(--head-text-color);
-            background-color: transparent;
-            border: none;
-            opacity: 0.5;
-            &.ant-radio-button-wrapper-checked {
-                color: var(--word-count-checked-color);
-                opacity: 1;
-            }
-            &:not(:first-child)::before {
-                background-color: transparent;
-                color: var(--head-text-color);
-                content: '/';
-            }
-        }
-        .english-next-line {
-            .ant-btn {
-                color: var(--head-text-color);
-                opacity: 0.55;
-                &:hover,
-                &:focus {
-                    color: var(--primary-color);
-                    opacity: 1;
-                }
-            }
-        }
+    .ghost-btn {
+        margin-left: 2px;
     }
 }

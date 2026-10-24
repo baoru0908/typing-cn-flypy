@@ -1,11 +1,7 @@
 /*
- * @Author: zhaoxuanzi
- * @Date: 2021-02-07 17:56:59
- * @LastEditors: zhaoxuanzi
- * @LastEditTime: 2021-02-08 11:29:26
+ * 成绩卡：速度 / 准确率 / 用时
  */
 import React from 'react';
-import { Row, Col } from 'antd';
 
 import './TypeResult.less';
 
@@ -17,22 +13,26 @@ interface Props {
 }
 
 const TypeResult: React.FC<Props> = (props) => {
+    const cells = [
+        { label: props.desc, value: props.numStr, primary: true },
+        { label: '准确率', value: `${props.acc}%`, primary: false },
+        { label: '用时', value: `${props.secs}s`, primary: false },
+    ];
+
     return (
         <div className="TypeResult">
-            <Row justify="center" gutter={80}>
-                <Col span={6}>
-                    <div className="label">{props.desc}</div>
-                    <div className="show-data">{props.numStr}</div>
-                </Col>
-                <Col span={6}>
-                    <div className="label">正确率</div>
-                    <div className="show-data">{props.acc}%</div>
-                </Col>
-                <Col span={6}>
-                    <div className="label">用时</div>
-                    <div className="show-data">{props.secs}s</div>
-                </Col>
-            </Row>
+            <div className="TypeResult__head">本次成绩</div>
+            <div className="TypeResult__row">
+                {cells.map((cell) => (
+                    <div
+                        className={`TypeResult__cell ${cell.primary ? 'is-primary' : ''}`}
+                        key={cell.label}
+                    >
+                        <span className="TypeResult__value">{cell.value}</span>
+                        <span className="TypeResult__label">{cell.label}</span>
+                    </div>
+                ))}
+            </div>
         </div>
     );
 };

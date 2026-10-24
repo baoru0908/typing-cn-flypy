@@ -9,6 +9,7 @@ import storage from '@/utils/storage';
 
 const UI_SCALE = 'UI_SCALE';
 const UI_THEME = 'UI_THEME';
+const HANZI_FONT = 'HANZI_FONT';
 const WORDS_MODE = 'WORDS_MODE';
 const COUNTDOWN_TIME = 'COUNTDOWN_TIME';
 const CUSTOMER_WORDS = 'CUSTOMER_WORDS';
@@ -18,6 +19,8 @@ const INPUT_MODE = 'INPUT_MODE';
 const _state = {
     uiScale: storage.local.get<string>(UI_SCALE) || 's',
     uiTheme: storage.local.get<string>(UI_THEME) || '',
+    // 汉字字族: sans-思源黑体  kai-霞鹜文楷
+    hanziFont: storage.local.get<string>(HANZI_FONT) || 'sans',
     wordsMode: storage.local.get<string>(WORDS_MODE) || '1',
     countdownTime: storage.local.get<string>(COUNTDOWN_TIME) || '60',
     customerWords: storage.local.get<Word[]>(CUSTOMER_WORDS) || [],
@@ -35,6 +38,10 @@ const reducer = {
     setUiTheme: (state: State, payload: State['uiScale']): Partial<State> => {
         storage.local.set(UI_THEME, payload);
         return { uiTheme: payload };
+    },
+    setHanziFont: (state: State, payload: State['hanziFont']): Partial<State> => {
+        storage.local.set(HANZI_FONT, payload);
+        return { hanziFont: payload };
     },
     setWordsMode: (state: State, payload: State['wordsMode']): Partial<State> => {
         storage.local.set(WORDS_MODE, payload);

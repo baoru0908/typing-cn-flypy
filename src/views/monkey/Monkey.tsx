@@ -1,13 +1,13 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { Row, Col, Radio } from 'antd';
-import { RadioChangeEvent } from 'antd/lib/radio';
 
 import './Monkey.less';
 import { storeConnect, MapState, MapDispatch } from '@/store/index';
 import wordTool, { WordType } from '@/utils/wordTool';
 import { getFlypy } from '@/utils/flypy';
+import { buildCharGroups, CharGroup } from '@/utils/codeGroup';
 import TypeResult from '@/components/typeResult/TypeResult';
 import ReloadBtn from '@/components/reloadBtn/ReloadBtn';
+import StatBar from '@/components/statBar/StatBar';
 
 interface LetterObj {
     letter: string;
@@ -15,12 +15,15 @@ interface LetterObj {
 }
 interface WordObj extends WordType {
     letterArr: LetterObj[];
+    /** 一字一组：汉字 + 该字对应的编码，用于逐字对齐 */
+    charGroups: CharGroup[];
     isCorrect: boolean | null;
     isSkip: boolean;
 }
 
 const SPACE_CODE = 32;
 const BACKSPACE_CODE = 8;
+const WORD_COUNTS = [20, 30, 40, 50];
 
 const getCurrentWordEl = (mEl: any) => Array.from<any>(mEl.children);
 
@@ -46,8 +49,9 @@ const Monkey: React.FC<MapState & MapDispatch> = (props) => {
     const [showTypeResult, setShowTypeResult] = useState(false);
     const [userInput, setUserInput] = useState('');
     const [wordArr, setWordArr] = useState<Array<WordObj>>([]);
-    const [caretLocation, setCaretLocation] = useState({ top: 0, left: 0 });
+    const [caretLocation, setCaretLocation] = useState({ top: 0, left: 0, height: 18 });
     const [wordCount, setWordCount] = useState(30);
+    const [liveSecs, setLiveSecs] = useState(0);
 
     // 输入方案: 1-全拼 2-小鹤双拼
     const inputMode = props.$state.root.inputMode;
@@ -65,17 +69,20 @@ const Monkey: React.FC<MapState & MapDispatch> = (props) => {
         const currentWordEl = getCurrentWordEl(mainEl.current)[coordinate[0]];
         if (!currentWordEl) return;
         const currentLetterArr = Array.from<any>(currentWordEl.getElementsByClassName('letter'));
+        if (currentLetterArr.length === 0) return;
         if (currentLetterArr.length <= coordinate[1]) {
             const letterRect = currentLetterArr[coordinate[1] - 1].getBoundingClientRect();
             setCaretLocation({
-                top: letterRect.top - mainElRect.top + 2,
+                top: letterRect.top - mainElRect.top,
                 left: letterRect.left - mainElRect.left + letterRect.width,
+                height: letterRect.height + 2,
             });
         } else {
             const letterRect = currentLetterArr[coordinate[1]].getBoundingClientRect();
             setCaretLocation({
-                top: letterRect.top - mainElRect.top + 2,
+                top: letterRect.top - mainElRect.top,
                 left: letterRect.left - mainElRect.left,
+                height: letterRect.height + 2,
             });
         }
     };
@@ -115,7 +122,9 @@ const Monkey: React.FC<MapState & MapDispatch> = (props) => {
                     const codeEl = document.createElement('code');
                     codeEl.className = 'letter wrong extra-letter';
                     codeEl.innerText = inputVal;
-                    currentWordEl.appendChild(codeEl);
+                    // 多打的字母要接在编码行末尾，不能挂到词根上（否则会多出一行）
+                    const codeLine = currentWordEl.querySelector('.word__code') || currentWordEl;
+                    codeLine.appendChild(codeEl);
                 }
                 newCoordinate = [coordinate[0], coordinate[1] + 1];
             }
@@ -125,7 +134,6 @@ const Monkey: React.FC<MapState & MapDispatch> = (props) => {
             setWordArr((_wordArr) => {
                 const letterObj = _wordArr[coordinate[0]].letterArr[coordinate[1]];
                 if (letterObj && keyCode !== SPACE_CODE) {
-                    // console.log(inputVal === letterObj.letter, letterObj);
                     letterObj.isCorrect = inputVal === letterObj.letter;
                     _wordArr[coordinate[0]].letterArr[coordinate[1]] = letterObj;
                 }
@@ -220,7 +228,7 @@ const Monkey: React.FC<MapState & MapDispatch> = (props) => {
             const currentWordEl = getCurrentWordEl(mainEl.current)[coordinate[0]];
             const extraLetterArr = currentWordEl.getElementsByClassName('extra-letter');
             if (extraLetterArr && extraLetterArr.length > 0) {
-                currentWordEl.removeChild(extraLetterArr[extraLetterArr.length - 1]);
+                extraLetterArr[extraLetterArr.length - 1].remove();
             }
             newCoordinate = [coordinate[0], coordinate[1] - 1];
         }
@@ -249,8 +257,7 @@ const Monkey: React.FC<MapState & MapDispatch> = (props) => {
     }, [userInput, wordArr]);
 
     const inputKeyDown = (evt: React.KeyboardEvent) => {
-        // console.log(evt.key, evt.keyCode, evt.metaKey);
-        // 9: Tab
+        // 9: Tab 保留给浏览器切焦点，其余按键接管
         if (evt.keyCode !== 9) {
             evt.preventDefault();
             evt.stopPropagation();
@@ -300,24 +307,27 @@ const Monkey: React.FC<MapState & MapDispatch> = (props) => {
         }
         setWordArr(
             wordTool.jsonCopy<WordType[]>(wordsBaseRef.current.slice(0, wordCount)).map((word) => {
+                const codeText = getWordCodeText(word);
                 return Object.assign({}, word, {
-                    letterArr: Array.from(getWordCodeText(word)).map((letter) => ({
+                    letterArr: Array.from(codeText).map((letter) => ({
                         letter,
                         isCorrect: null,
                     })),
+                    charGroups: buildCharGroups(word.label, codeText, inputMode),
                     isCorrect: null,
                     isSkip: false,
                 });
             })
         );
         setUserInput('');
+        setLiveSecs(0);
         setIsFadingTypeMain(false);
         setShowTypeResult(false);
         setTimeout(() => {
             focusToInput();
             setCaret();
         }, 10);
-    }, [wordCount, getWordCodeText]);
+    }, [wordCount, getWordCodeText, inputMode]);
 
     useEffect(() => {
         wordsBaseRef.current = wordTool.getWords(
@@ -327,126 +337,228 @@ const Monkey: React.FC<MapState & MapDispatch> = (props) => {
         reloadWord();
     }, [props.$state.root.wordsMode, props.$state.root.customerWords, reloadWord, wordCount]);
 
+    // 输入过程中刷新计时
+    useEffect(() => {
+        if (!isTyping || showTypeResult) return undefined;
+        const timer = window.setInterval(() => {
+            const begin = typeResultRef.current.time.begin;
+            if (!begin) return;
+            setLiveSecs(Math.max(1, Math.round((Date.now() - begin) / 1000)));
+        }, 400);
+        return () => window.clearInterval(timer);
+    }, [isTyping, showTypeResult]);
+
+    /* ---------------- 实时统计 ---------------- */
+    const allLetters = wordArr.reduce<LetterObj[]>((acc, word) => acc.concat(word.letterArr), []);
+    const typedLetters = allLetters.filter((l) => l.isCorrect !== null);
+    const rightLetters = allLetters.filter((l) => l.isCorrect === true);
+    const liveAcc = typedLetters.length
+        ? Math.round((rightLetters.length / typedLetters.length) * 100)
+        : 100;
+    const rightWords = wordArr.filter((w) => w.isCorrect === true).length;
+    const liveWpm = liveSecs > 0 ? Math.round(rightWords / (liveSecs / 60)) : 0;
+    const mm = Math.floor(liveSecs / 60);
+    const ss = String(liveSecs % 60).padStart(2, '0');
+
+    const activeWordIndex = coordinateRef.current[0];
+    const tipText =
+        inputMode === '2'
+            ? '两键一字，打满自动上词 · 空格也可上词'
+            : '输入完整拼音后按空格上词';
+
     return (
-        <div className="Monkey">
-            <div className="word-count-radio">
-                <Radio.Group
-                    value={wordCount}
-                    size="small"
-                    onChange={(e: RadioChangeEvent) => {
-                        setWordCount(e.target.value);
-                    }}
-                >
-                    <Radio.Button tabIndex={-1} value={20}>
-                        20
-                    </Radio.Button>
-                    <Radio.Button tabIndex={-1} value={30}>
-                        30
-                    </Radio.Button>
-                    <Radio.Button tabIndex={-1} value={40}>
-                        40
-                    </Radio.Button>
-                    <Radio.Button tabIndex={-1} value={50}>
-                        50
-                    </Radio.Button>
-                </Radio.Group>
-            </div>
-            <Row justify="center" align="middle">
-                <Col
-                    flex="900px"
-                    className={`type-main-box ${isFadingTypeMain ? 'fading' : ''} ${
-                        showTypeResult ? 'hide' : ''
-                    }`}
-                >
-                    <div
-                        className={`caret ${isTyping ? (isCaretFlash ? 'flash' : '') : 'hide'}`}
-                        ref={caretElRef}
-                        style={{
-                            transform: `translate3d(${caretLocation.left}px,${caretLocation.top}px,0)`,
-                        }}
-                    ></div>
-                    <div className="words-box" onClick={focusToInput} ref={mainEl}>
-                        {wordArr.map((word, wi) => (
-                            <div
-                                className={`word ${
-                                    word.isCorrect
-                                        ? 'correct'
-                                        : word.isCorrect === false
-                                        ? 'wrong'
-                                        : ''
-                                }`}
-                                key={wi}
+        <div className="Monkey page">
+            <div className="page__inner">
+                <div className="page__toolbar">
+                    <div className="seg seg--sm" role="group" aria-label="输入方案">
+                        <button
+                            type="button"
+                            tabIndex={-1}
+                            className={inputMode === '1' ? 'is-active' : ''}
+                            onClick={() => props.$dispatch('setInputMode', '1')}
+                            title="全拼：输入完整拼音后按空格上词"
+                        >
+                            全拼
+                        </button>
+                        <button
+                            type="button"
+                            tabIndex={-1}
+                            className={inputMode === '2' ? 'is-active' : ''}
+                            onClick={() => props.$dispatch('setInputMode', '2')}
+                            title="小鹤双拼：两键一字，打满自动上词"
+                        >
+                            双拼
+                        </button>
+                    </div>
+                    <div className="chips">
+                        <span className="chips__label">词数</span>
+                        {WORD_COUNTS.map((count) => (
+                            <button
+                                key={count}
+                                type="button"
+                                tabIndex={-1}
+                                className={`chips__item ${wordCount === count ? 'is-active' : ''}`}
+                                onClick={() => setWordCount(count)}
                             >
-                                <div className="label">{word.label}</div>
-                                {word.letterArr?.map((letterObj, li) => (
-                                    <code
-                                        className={`letter ${
-                                            letterObj.isCorrect
-                                                ? 'correct'
-                                                : letterObj.isCorrect === false
-                                                ? 'wrong'
-                                                : ''
-                                        }`}
-                                        key={`${wi}_${li}`}
-                                    >
-                                        {letterObj.letter}
-                                    </code>
-                                ))}
-                            </div>
+                                {count}
+                            </button>
                         ))}
                     </div>
-                    <input
-                        className="hidden-input"
-                        type="text"
-                        ref={inputEl}
-                        onKeyDown={inputKeyDown}
-                        /* readOnly：输入框不可编辑，系统输入法(IME)不会在上面启动组词，
-                           避免拼音输入法拦截按键/弹出候选窗等 bug；keydown 事件照常触发 */
-                        onCompositionStart={(evt) => evt.preventDefault()}
-                        autoComplete="off"
-                        autoCapitalize="off"
-                        autoCorrect="off"
-                        spellCheck={false}
-                        readOnly
-                        onBlur={() => {
-                            setIsTyping(false);
-                            // setIsCaretFlash(false);
-                        }}
-                        onFocus={() => {
-                            setIsTyping(true);
-                            setIsCaretFlash(true);
-                        }}
-                    />
-                    <div className="reload-line">
-                        <ReloadBtn onClick={reloadWord} />
+                    <span className="chips__note">{tipText}</span>
+                    <div className="page__toolbar-right">
+                        <StatBar
+                            active={typedLetters.length > 0}
+                            items={[
+                                { label: 'WPM', value: liveWpm },
+                                { label: '准确率', value: `${liveAcc}%` },
+                                { label: '用时', value: `${mm}:${ss}` },
+                            ]}
+                        />
                     </div>
-                    {/* {userInput} */}
-                    <div className={`tip-line ${!isCaretFlash ? 'hide' : ''}`}>
-                        <div>点击词块进入输入状态</div>
-                        <div>
-                            {inputMode === '2'
-                                ? '输入小鹤双拼编码，打满自动上词（空格也可上词）'
-                                : '输入正确的拼音字母，然后空格'}
+                </div>
+
+                <div
+                    className={`Monkey__stage ${isFadingTypeMain ? 'is-fading' : ''} ${
+                        showTypeResult ? 'is-hidden' : ''
+                    }`}
+                >
+                    <div className="Monkey__panel" onClick={focusToInput}>
+                        <div className="Monkey__typebox">
+                            <div className="words-box" ref={mainEl}>
+                                {wordArr.map((word, wi) => {
+                                    const isActive = wi === activeWordIndex && !showTypeResult;
+                                    // 两条行各自按 charGroups 顺序取字母/汉字
+                                    let codeOffset = 0;
+                                    let offset = 0;
+                                    return (
+                                        <div
+                                            className={`word ${
+                                                word.isCorrect
+                                                    ? 'is-correct'
+                                                    : word.isCorrect === false
+                                                    ? 'is-wrong'
+                                                    : ''
+                                            } ${isActive ? 'is-active' : ''}`}
+                                            key={wi}
+                                        >
+                                            {/* 编码行：等宽连续排列，音节之间用恒定的 2px 断开。
+                                                不做逐字定宽盒子 —— 那会让短码凭空多出留白，
+                                                码流空隙忽大忽小（旧版 0/4/6/8px 混杂） */}
+                                            <div className="word__code">
+                                                {word.charGroups.map((group, gi) => {
+                                                    const letters = word.letterArr.slice(
+                                                        codeOffset,
+                                                        codeOffset + group.code.length
+                                                    );
+                                                    codeOffset += group.code.length;
+                                                    return (
+                                                        <span
+                                                            className="code-group"
+                                                            key={`${wi}_c${gi}`}
+                                                        >
+                                                            {letters.map((letterObj, li) => (
+                                                                <code
+                                                                    className={`letter ${
+                                                                        letterObj.isCorrect
+                                                                            ? 'correct'
+                                                                            : letterObj.isCorrect ===
+                                                                              false
+                                                                            ? 'wrong'
+                                                                            : ''
+                                                                    }`}
+                                                                    key={`${wi}_${gi}_${li}`}
+                                                                >
+                                                                    {letterObj.letter}
+                                                                </code>
+                                                            ))}
+                                                        </span>
+                                                    );
+                                                })}
+                                            </div>
+                                            {/* 汉字行：统一步进，词内字距与拼音长度彻底解耦 */}
+                                            <div className="word__hanzi">
+                                                {word.charGroups.map((group, gi) => {
+                                                    const letters = word.letterArr.slice(
+                                                        offset,
+                                                        offset + group.code.length
+                                                    );
+                                                    offset += group.code.length;
+                                                    const done =
+                                                        letters.length > 0 &&
+                                                        letters.every(
+                                                            (l) => l.isCorrect === true
+                                                        );
+                                                    const bad = letters.some(
+                                                        (l) => l.isCorrect === false
+                                                    );
+                                                    return (
+                                                        <span
+                                                            className={`hanzi ${
+                                                                done ? 'is-done' : ''
+                                                            } ${bad ? 'is-bad' : ''}`}
+                                                            key={`${wi}_h${gi}`}
+                                                        >
+                                                            {group.hanzi}
+                                                        </span>
+                                                    );
+                                                })}
+                                            </div>
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                            <div
+                                className={`caret ${
+                                    isTyping ? (isCaretFlash ? 'flash' : '') : 'hide'
+                                }`}
+                                ref={caretElRef}
+                                style={{
+                                    transform: `translate3d(${caretLocation.left}px,${caretLocation.top}px,0)`,
+                                    height: `${caretLocation.height}px`,
+                                }}
+                            />
                         </div>
-                        <div>
-                            输入状态下<code>Tab</code>后回车可以直接刷新
-                        </div>
-                        <div>觉得有意思可以打赏一下(#^.^#)(在上面↑↑)</div>
                     </div>
-                </Col>
-                <Col flex="900px" className={`type-result-box ${showTypeResult ? 'show' : ''}`}>
-                    {/* {JSON.stringify(typeResultRef.current)} */}
+
+                    <div className="Monkey__foot">
+                        <span className="Monkey__tip">
+                            点击词块开始 · <code>Backspace</code> 可退格修正
+                        </span>
+                        <ReloadBtn onClick={reloadWord} label="换一组" />
+                    </div>
+                </div>
+
+                <div className={`Monkey__result ${showTypeResult ? 'is-shown' : ''}`}>
                     <TypeResult
                         desc="WPM"
                         numStr={typeResultRef.current.wpm}
                         acc={typeResultRef.current.acc}
                         secs={typeResultRef.current.time.secs}
                     />
-                    <div className="reload-line">
-                        <ReloadBtn onClick={reloadWord} />
-                    </div>
-                </Col>
-            </Row>
+                </div>
+
+                <input
+                    className="hidden-input"
+                    type="text"
+                    ref={inputEl}
+                    onKeyDown={inputKeyDown}
+                    /* readOnly：输入框不可编辑，系统输入法(IME)不会在上面启动组词，
+                       避免拼音输入法拦截按键/弹出候选窗等 bug；keydown 事件照常触发 */
+                    onCompositionStart={(evt) => evt.preventDefault()}
+                    autoComplete="off"
+                    autoCapitalize="off"
+                    autoCorrect="off"
+                    spellCheck={false}
+                    readOnly
+                    onBlur={() => {
+                        setIsTyping(false);
+                    }}
+                    onFocus={() => {
+                        setIsTyping(true);
+                        setIsCaretFlash(true);
+                    }}
+                />
+            </div>
         </div>
     );
 };

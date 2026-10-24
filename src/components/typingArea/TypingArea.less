@@ -1,120 +1,317 @@
-/* 通用打字区样式
- * 三个变体：
- *   prose — 英文/中文散文：衬线友好的无衬线、宽松行距、不断词
- *   code  — 代码：等宽字体、保留缩进与空行
- *   cn    — 中文词拼：紧凑行距
- * 全部颜色走主题语义变量，不硬编码，保证各主题深浅色一致。
- */
+/* ==========================================================================
+ * 通用打字区
+ * 排版变体：
+ *   prose — 英文散文：22px / 行距 1.95 / 字距 0.004em / 约 76 字符行宽
+ *   code  — 代码：等宽 16px / 行距 1.8 / 保留缩进与空行 / 关闭连字
+ *   cn    — 中文：21px / 行距 1.9 / 加大字距，与拼音词块同一节奏
+ * 颜色全部走语义令牌，40 套主题自动适配
+ * ========================================================================== */
+
 .TypingArea {
+    width: 100%;
+    max-width: 100%;
+    margin: 0 auto;
+
+    /* ---------- 面板上方信息行 ---------- */
+    &__meta {
+        display: flex;
+        align-items: flex-end;
+        gap: 16px;
+        min-height: 36px;
+        margin-bottom: 14px;
+    }
+
+    &__hint {
+        font-size: 12.5px;
+        color: var(--ui-faint);
+        transition: opacity 0.25s var(--ease-out);
+
+        &.is-hidden {
+            opacity: 0;
+        }
+    }
+
+    &__meta-right {
+        display: flex;
+        align-items: flex-end;
+        gap: 22px;
+        margin-left: auto;
+    }
+
+    &__count {
+        font-family: var(--ui-font-mono);
+        font-size: 11px;
+        letter-spacing: 0.02em;
+        color: var(--ui-ghost);
+        font-variant-numeric: tabular-nums;
+        padding-bottom: 2px;
+    }
+
+    /* ---------- 面板 ---------- */
+    &__panel {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        min-height: 176px;
+        padding: 34px 38px 0;
+        background: var(--ui-surface);
+        border: 1px solid var(--ui-line);
+        border-radius: var(--ui-radius-lg);
+        box-shadow:
+            0 1px 0 rgba(255, 255, 255, 0.04) inset,
+            0 34px 70px -50px rgba(0, 0, 0, 0.6);
+        cursor: text;
+        overflow: hidden;
+        transition:
+            border-color 0.25s var(--ease-out),
+            background-color 0.3s var(--ease-in-out);
+
+        &.is-live {
+            border-color: var(--ui-accent-line);
+        }
+    }
+
+    /* ---------- 正文 ---------- */
     &__text {
         position: relative;
-        color: var(--typing-text-color);
+        flex: 1;
+        color: var(--ui-text);
         user-select: none;
-        min-height: 220px;
-        border-radius: 12px;
-        padding: 22px 24px;
-        background-color: var(--typing-panel-bg-color);
-        border: 1px solid var(--typing-panel-border-color);
-        transition:
-            color 80ms linear,
-            background-color 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
-
-        .char {
-            position: relative;
-            border-radius: 2px;
-            transition: color 80ms linear;
-            /* 默认（prose）不断词：英文按单词整体换行 */
-            white-space: pre-wrap;
-            word-break: normal;
-            overflow-wrap: break-word;
-            &.pending {
-                opacity: 0.5;
-            }
-            &.correct {
-                color: var(--typing-correct-color);
-                opacity: 1;
-                text-shadow: 0 0 8px currentColor;
-            }
-            &.wrong {
-                color: var(--typing-error-color);
-                opacity: 1;
-                background-color: var(--typing-error-bg-color);
-                text-shadow: 0 0 8px currentColor;
-            }
-            &.extra {
-                color: var(--typing-error-color);
-                opacity: 1;
-                text-decoration: underline wavy currentColor;
-            }
-            &.current {
-                background-color: var(--typing-current-bg-color);
-            }
-        }
-        .char-space-wrong {
-            background-color: var(--typing-error-bg-color);
-        }
-    }
-
-    /* 英文散文：更舒适的字号与行距 */
-    &--prose &__text {
-        font-size: 24px;
-        line-height: 1.85;
-        letter-spacing: 0.01em;
-        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC',
-            'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
-        text-align: left;
-        max-width: 860px;
-        margin: 0 auto;
-    }
-
-    /* 代码：等宽、行距紧、保留空白 */
-    &--code &__text {
-        font-family: var(--typing-code-font);
-        font-size: 17px;
-        line-height: 1.75;
-        letter-spacing: 0;
-        tab-size: 4;
-        max-width: 900px;
-        margin: 0 auto;
-        .char {
-            /* 代码必须精确：空白字符也要可见占位 */
-            white-space: pre;
-        }
-    }
-
-    /* 中文词拼：紧凑 */
-    &--cn &__text {
-        font-size: 22px;
-        line-height: 1.6;
-        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC',
-            'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
-        max-width: 900px;
-        margin: 0 auto;
+        padding-bottom: 34px;
+        transition: color 0.3s var(--ease-in-out);
     }
 
     &__caret {
         position: absolute;
+        top: 0;
+        left: 0;
         width: 2px;
-        height: 1.5em;
         border-radius: 2px;
-        background-color: var(--typing-caret-color);
+        background: var(--ui-accent);
         box-shadow:
-            0 0 6px var(--typing-caret-color),
-            0 0 14px var(--typing-caret-color);
-        transition: transform 90ms cubic-bezier(0.2, 0.8, 0.3, 1);
+            0 0 6px var(--ui-accent),
+            0 0 16px var(--ui-accent);
         pointer-events: none;
+        transition: transform 90ms var(--ease-out);
+
         &.flash {
-            animation: caretFlash 1s infinite;
+            animation: caretFlash 1.05s infinite;
         }
+
         &.hide {
             display: none;
         }
     }
+
+    &__progress {
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        height: 2px;
+        background: var(--ui-line);
+
+        i {
+            display: block;
+            height: 100%;
+            width: 0;
+            background: var(--ui-accent);
+            transition: width 0.18s var(--ease-out);
+        }
+    }
+
+    &__foot {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        margin-top: 16px;
+    }
+
+    &__tip {
+        font-size: 11.5px;
+        color: var(--ui-ghost);
+        letter-spacing: 0.01em;
+    }
+
+    &__result {
+        margin-top: 22px;
+    }
+
     &__hidden-input {
         position: absolute;
         left: -100vw;
+        width: 1px;
+        height: 1px;
+        opacity: 0;
     }
-    &__result {
-        margin-top: 30px;
+}
+
+/* ---------- 字符状态 ---------- */
+.TypingArea__text .char {
+    position: relative;
+    border-radius: 3px;
+    transition: color 80ms linear;
+
+    &.pending {
+        opacity: 0.55;
+    }
+
+    &.correct {
+        color: var(--ui-correct);
+        opacity: 1;
+    }
+
+    &.wrong {
+        color: var(--ui-error);
+        opacity: 1;
+        background: var(--ui-error-soft);
+    }
+
+    &.extra {
+        color: var(--ui-error);
+        opacity: 1;
+        text-decoration: underline wavy currentColor;
+    }
+
+    &.current {
+        box-shadow: inset 0 -2px 0 var(--ui-accent-line);
+    }
+}
+
+.TypingArea__text .char-space-wrong {
+    background: var(--ui-error-soft);
+}
+
+/* ==========================================================================
+ * 变体：英文散文
+ * ========================================================================== */
+
+.TypingArea--prose {
+    max-width: 100%;
+
+    .TypingArea__text {
+        font-family: var(--ui-font-read);
+        font-size: var(--type-prose);
+        line-height: var(--type-prose-leading);
+        letter-spacing: var(--type-prose-tracking);
+        word-spacing: var(--type-prose-word-spacing);
+        font-feature-settings:
+            'kern' 1,
+            'liga' 1,
+            'calt' 1;
+        font-optical-sizing: auto;
+        word-break: normal;
+        overflow-wrap: break-word;
+        text-align: left;
+
+        .char {
+            white-space: pre-wrap;
+        }
+    }
+}
+
+/* ==========================================================================
+ * 变体：代码
+ * ========================================================================== */
+
+.TypingArea--code {
+    max-width: 100%;
+
+    .TypingArea__panel {
+        min-height: 260px;
+    }
+
+    .TypingArea__text {
+        font-family: var(--ui-font-mono);
+        font-size: var(--type-code);
+        line-height: var(--type-code-leading);
+        letter-spacing: var(--type-code-tracking);
+        font-weight: 400;
+        tab-size: 4;
+        font-variant-ligatures: none;
+        font-feature-settings: 'liga' 0, 'calt' 0;
+
+        .char {
+            /* 代码必须精确：空白字符也要可见占位 */
+            white-space: pre;
+        }
+
+        .char.correct {
+            /* 等宽正文不需要发光，保持可读 */
+            text-shadow: none;
+        }
+    }
+}
+
+/* ==========================================================================
+ * 变体：中文
+ * ========================================================================== */
+
+.TypingArea--cn {
+    .TypingArea__text {
+        font-family: var(--ui-font-hanzi);
+        font-size: var(--type-hanzi);
+        line-height: var(--type-prose-leading);
+        letter-spacing: var(--type-hanzi-tracking);
+    }
+}
+
+@keyframes caretFlash {
+    0%,
+    100% {
+        opacity: 0.15;
+    }
+
+    50% {
+        opacity: 1;
+    }
+}
+
+/* ==========================================================================
+ * 响应式
+ * ========================================================================== */
+
+@media (max-width: 768px) {
+    .TypingArea {
+        max-width: 100%;
+    }
+
+    .TypingArea__panel {
+        min-height: 180px;
+        padding: 22px 20px 0;
+        border-radius: 12px;
+    }
+
+    .TypingArea__text {
+        padding-bottom: 24px;
+    }
+
+    .TypingArea--code .TypingArea__panel {
+        min-height: 200px;
+    }
+
+    .TypingArea__meta {
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 10px;
+        min-height: 0;
+        margin-bottom: 10px;
+    }
+
+    .TypingArea__meta-right {
+        gap: 16px;
+    }
+
+    .TypingArea__count {
+        display: none;
+    }
+
+    .TypingArea__foot {
+        margin-top: 12px;
+    }
+
+    .TypingArea__tip {
+        display: none;
     }
 }

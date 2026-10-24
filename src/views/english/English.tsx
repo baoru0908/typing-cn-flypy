@@ -3,7 +3,6 @@
  * 短句/段落/长文三档，可在同档内换一段
  */
 import React, { useState, useCallback, useMemo } from 'react';
-import { Radio, Button } from 'antd';
 import { SwapOutlined } from '@ant-design/icons';
 
 import './English.less';
@@ -48,32 +47,31 @@ const English: React.FC = () => {
     const count = useMemo(() => poolOf(level).length, [level]);
 
     return (
-        <div className="English">
-            <div className="word-count-radio">
-                <Radio.Group
-                    value={level}
-                    size="small"
-                    onChange={(e) => onLevelChange(e.target.value as Level)}
-                >
-                    {LEVELS.map((lv) => (
-                        <Radio.Button tabIndex={-1} key={lv} value={lv}>
-                            {LEVEL_LABEL[lv]}
-                        </Radio.Button>
-                    ))}
-                </Radio.Group>
-                <span className="english-next-line">
-                    <Button
-                        tabIndex={-1}
-                        size="small"
-                        type="link"
-                        icon={<SwapOutlined />}
-                        onClick={onNext}
-                    >
-                        换一段（{count}）
-                    </Button>
-                </span>
+        <div className="English page">
+            <div className="page__inner">
+                <div className="page__toolbar">
+                    <div className="chips">
+                        <span className="chips__label">长度</span>
+                        {LEVELS.map((lv) => (
+                            <button
+                                key={lv}
+                                type="button"
+                                tabIndex={-1}
+                                className={`chips__item ${level === lv ? 'is-active' : ''}`}
+                                onClick={() => onLevelChange(lv)}
+                            >
+                                {LEVEL_LABEL[lv]}
+                            </button>
+                        ))}
+                    </div>
+                    <button type="button" tabIndex={-1} className="ghost-btn" onClick={onNext}>
+                        <SwapOutlined />
+                        换一段
+                        <span className="ghost-btn__count">{count}</span>
+                    </button>
+                </div>
+                <TypingArea text={text} variant="prose" />
             </div>
-            <TypingArea text={text} variant="prose" />
         </div>
     );
 };

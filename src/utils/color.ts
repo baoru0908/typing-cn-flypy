@@ -1,0 +1,87 @@
+/** 判断颜色是否为浅色，用于主题分组 */
+export function isLightColor(color: string): boolean {
+    const c = (color || '').trim();
+    let r = 0;
+    let g = 0;
+    let b = 0;
+    if (c.startsWith('#')) {
+        let hex = c.slice(1);
+        if (hex.length === 3) {
+            hex = hex
+                .split('')
+                .map((x) => x + x)
+                .join('');
+        }
+        r = parseInt(hex.slice(0, 2), 16) || 0;
+        g = parseInt(hex.slice(2, 4), 16) || 0;
+        b = parseInt(hex.slice(4, 6), 16) || 0;
+    } else {
+        const m = c.match(/(\d+)[,\s]+(\d+)[,\s]+(\d+)/);
+        if (m) {
+            r = Number(m[1]);
+            g = Number(m[2]);
+            b = Number(m[3]);
+        }
+    }
+    const lum = (0.2126 * r + 0.7152 * g + 0.0722 * b) / 255;
+    return lum > 0.6;
+}
+
+/**
+ * 把任意 CSS 颜色解析成 [r, g, b]。
+ * 借浏览器解析，因此 red / rgb() / hsl() / 变量算出的值都能吃。
+ */
+function toRgb(color: string): [number, number, number] | null {
+    if (typeof document === 'undefined' || !color) return null;
+    const el = document.createElement('span');
+    el.style.display = 'none';
+    el.style.color = color;
+    // 非法颜色不会被写入，据此判空
+    if (!el.style.color) return null;
+    document.body.appendChild(el);
+    const rgb = getComputedStyle(el).color;
+    el.remove();
+    const m = rgb.match(/\d+(\.\d+)?/g);
+    if (!m || m.length < 3) return null;
+    return [Number(m[0]), Number(m[1]), Number(m[2])];
+}
+
+const srgbToLinear = (v: number) => {
+    const c = v / 255;
+    return c <= 0.04045 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
+};
+
+/** sRGB → CIELAB（D65），用于算感知色差 */
+function toLab([r, g, b]: [number, number, number]): [number, number, number] {
+    const R = srgbToLinear(r);
+    const G = srgbToLinear(g);
+    const B = srgbToLinear(b);
+    const X = (0.4124 * R + 0.3576 * G + 0.1805 * B) / 0.95047;
+    const Y = 0.2126 * R + 0.7152 * G + 0.0722 * B;
+    const Z = (0.0193 * R + 0.1192 * G + 0.9505 * B) / 1.08883;
+    const f = (t: number) => (t > 0.008856 ? Math.cbrt(t) : 7.787 * t + 16 / 116);
+    const fx = f(X);
+    const fy = f(Y);
+    const fz = f(Z);
+    return [116 * fy - 16, 500 * (fx - fy), 200 * (fy - fz)];
+}
+
+/** CIE76 色差：0 为完全同色，数值越大越容易区分 */
+export function deltaE(a: string, b: string): number {
+    const ca = toRgb(a);
+    const cb = toRgb(b);
+    if (!ca || !cb) return 100;
+    const la = toLab(ca);
+    const lb = toLab(cb);
+    return Math.hypot(la[0] - lb[0], la[1] - lb[1], la[2] - lb[2]);
+}
+
+/**
+ * 强调色与错误色是否近到无法区分。
+ * 实测全部 40 套主题的 ΔE：nothing / nothing-dark = 0，
+ * 次低是 rose-pine-dawn 的 29.5，再往下直接跳到 40 以上。
+ * 阈值取 25（略高于小色块的可觉差 JND≈20，远低于 13px 小字所需），
+ * 因此只命中真正同色的主题，不会误伤只是相近的配色。
+ */
+export const isColorClash = (a: string, b: string, threshold = 25): boolean =>
+    !!a && !!b && deltaE(a, b) < threshold;

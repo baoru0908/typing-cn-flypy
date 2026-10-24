@@ -1,35 +1,15 @@
+/* 代码模式：语言列表较长，允许横向滚动而不换行挤压 */
 .Code {
-    margin-top: 50px;
-    .code-lang-radio {
-        display: flex;
-        align-items: center;
-        gap: 18px;
-        padding: 0 0 30px 30px;
-        .ant-radio-button-wrapper {
-            color: var(--head-text-color);
-            background-color: transparent;
-            border: none;
-            opacity: 0.5;
-            &.ant-radio-button-wrapper-checked {
-                color: var(--word-count-checked-color);
-                opacity: 1;
-            }
-            &:not(:first-child)::before {
-                background-color: transparent;
-                color: var(--head-text-color);
-                content: '/';
-            }
-        }
-        .code-next-line {
-            .ant-btn {
-                color: var(--head-text-color);
-                opacity: 0.55;
-                &:hover,
-                &:focus {
-                    color: var(--primary-color);
-                    opacity: 1;
-                }
-            }
+    .chips--scroll {
+        flex: 1 1 auto;
+        min-width: 0;
+        max-width: 100%;
+        overflow-x: auto;
+        flex-wrap: nowrap;
+        scrollbar-width: none;
+
+        &::-webkit-scrollbar {
+            display: none;
         }
     }
 }

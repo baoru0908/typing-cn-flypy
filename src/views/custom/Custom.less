@@ -1,17 +1,30 @@
+/* 自定义模式：编辑器与打字面板共用同一容器宽度 */
 .Custom {
-    margin-top: 50px;
-    .custom-input-line {
-        padding: 0 0 30px 30px;
+    &__editor {
+        margin-bottom: 20px;
+        animation: editorIn 0.2s var(--ease-out);
+
         textarea {
-            background-color: var(--home-window-bg-color);
-            color: var(--home-window-text-color);
-            border-color: var(--primary-color);
+            font-family: var(--ui-font-ui) !important;
+            font-size: 13.5px !important;
+            line-height: 1.9 !important;
         }
     }
-    .custom-tip {
-        padding: 0 0 20px 30px;
-        font-size: 12px;
-        color: var(--head-text-color);
-        opacity: 0.5;
+}
+
+@keyframes editorIn {
+    from {
+        opacity: 0;
+        transform: translateY(-4px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@media (max-width: 768px) {
+    .Custom__editor {
+        margin-bottom: 14px;
     }
 }

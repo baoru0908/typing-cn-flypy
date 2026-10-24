@@ -1,3 +1,141 @@
 .app-main {
-    padding: 10px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+}
+
+/* 页面主体：统一容器与垂直节奏 */
+.page {
+    flex: 1;
+    padding: 26px 0 96px;
+}
+
+/* 页面内容列：工具条与打字面板共用同一条左右轴线 */
+.page__inner {
+    width: 100%;
+    max-width: var(--ui-measure);
+    margin: 0 auto;
+    padding: 0 32px;
+}
+
+.page__toolbar {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+    min-height: 34px;
+    margin-bottom: 20px;
+}
+
+.page__toolbar-right {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 22px;
+}
+
+/* ---- 选项 chips：词数 / 档位 / 语言 ---- */
+.chips {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+
+    &__label {
+        margin-right: 9px;
+        font-size: 10.5px;
+        font-weight: 600;
+        letter-spacing: 0.13em;
+        text-transform: uppercase;
+        color: var(--ui-ghost);
+        white-space: nowrap;
+    }
+
+    &__item {
+        border: 0;
+        background: transparent;
+        padding: 5px 10px;
+        border-radius: 6px;
+        color: var(--ui-dim);
+        font-family: var(--ui-font-ui);
+        font-size: 12.5px;
+        line-height: 1.3;
+        cursor: pointer;
+        white-space: nowrap;
+        transition:
+            color 0.16s var(--ease-out),
+            background-color 0.16s var(--ease-out);
+
+        &:hover {
+            color: var(--ui-text);
+            background: var(--ui-surface-2);
+        }
+
+        &.is-active {
+            color: var(--ui-accent);
+            background: var(--ui-accent-soft);
+        }
+    }
+
+    &__note {
+        font-size: 11.5px;
+        color: var(--ui-ghost);
+        letter-spacing: 0.01em;
+    }
+}
+
+@media (max-width: 768px) {
+    .page {
+        padding: 14px 0 64px;
+    }
+
+    .page__inner {
+        padding: 0 18px;
+    }
+
+    .page__toolbar {
+        gap: 12px;
+        margin-bottom: 14px;
+    }
+
+    .page__toolbar-right {
+        width: 100%;
+        margin-left: 0;
+    }
+
+    .chips__note {
+        display: none;
+    }
+}
+
+/* ---- 次级操作按钮 ---- */
+.ghost-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    height: 30px;
+    padding: 0 12px;
+    border: 1px solid var(--ui-line);
+    border-radius: 7px;
+    background: transparent;
+    color: var(--ui-dim);
+    font-family: var(--ui-font-ui);
+    font-size: 12.5px;
+    line-height: 1;
+    cursor: pointer;
+    white-space: nowrap;
+    transition:
+        color 0.16s var(--ease-out),
+        border-color 0.16s var(--ease-out);
+
+    &:hover {
+        color: var(--ui-text);
+        border-color: var(--ui-accent-line);
+    }
+
+    &__count {
+        color: var(--ui-ghost);
+        font-size: 11px;
+        font-variant-numeric: tabular-nums;
+    }
 }

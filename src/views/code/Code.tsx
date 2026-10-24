@@ -4,7 +4,6 @@
  * 每种语言有多个例子，换一题按钮在同语言内轮换
  */
 import React, { useState, useCallback, useMemo } from 'react';
-import { Radio, Button } from 'antd';
 import { SwapOutlined } from '@ant-design/icons';
 
 import './Code.less';
@@ -40,32 +39,31 @@ const Code: React.FC = () => {
     const count = useMemo(() => codeSnippets.filter((s) => s.name === lang).length, [lang]);
 
     return (
-        <div className="Code">
-            <div className="code-lang-radio">
-                <Radio.Group
-                    value={lang}
-                    size="small"
-                    onChange={(e) => onLangChange(e.target.value)}
-                >
-                    {LANGS.map((name) => (
-                        <Radio.Button tabIndex={-1} key={name} value={name}>
-                            {name}
-                        </Radio.Button>
-                    ))}
-                </Radio.Group>
-                <span className="code-next-line">
-                    <Button
-                        tabIndex={-1}
-                        size="small"
-                        type="link"
-                        icon={<SwapOutlined />}
-                        onClick={onNext}
-                    >
-                        换一题（{count}）
-                    </Button>
-                </span>
+        <div className="Code page">
+            <div className="page__inner">
+                <div className="page__toolbar">
+                    <div className="chips chips--scroll">
+                        <span className="chips__label">语言</span>
+                        {LANGS.map((name) => (
+                            <button
+                                key={name}
+                                type="button"
+                                tabIndex={-1}
+                                className={`chips__item ${lang === name ? 'is-active' : ''}`}
+                                onClick={() => onLangChange(name)}
+                            >
+                                {name}
+                            </button>
+                        ))}
+                    </div>
+                    <button type="button" tabIndex={-1} className="ghost-btn" onClick={onNext}>
+                        <SwapOutlined />
+                        换一题
+                        <span className="ghost-btn__count">{count}</span>
+                    </button>
+                </div>
+                <TypingArea text={code} expandTabs variant="code" />
             </div>
-            <TypingArea text={code} expandTabs variant="code" />
         </div>
     );
 };

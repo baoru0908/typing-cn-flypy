@@ -11,8 +11,21 @@ node_modules
 dist
 dist-ssr
 dist-single
+dist-check
 *.local
 report.html
+
+# 构建产物
+# 单文件版由 scripts/pack-single.js 写到仓库外（../typing-cn-小鹤双拼.html），
+# 万一被复制回根目录也不该进版本控制
+typing-cn-*.html
+# npm run online / online2 的部署输出
+docs/
+docs-nobase/
+
+# 工具目录
+.workbuddy-ai/
+.dsh-progress/
 
 # Editor directories and files
 .vscode/*

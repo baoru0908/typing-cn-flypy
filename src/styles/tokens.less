@@ -1,0 +1,177 @@
+/* ==========================================================================
+ * 设计令牌层 / Design Tokens
+ * --------------------------------------------------------------------------
+ * 所有语义变量都从各主题已有的 --bg-color / --head-text-color / --primary-color
+ * 推导，因此 40 套主题无需逐个改动即可获得统一的新外观。
+ * 加载顺序：主题 CSS（<link>）→ 本文件（bundle），同优先级后者覆盖。
+ * ========================================================================== */
+
+:root {
+    /* ---- 尺度 ---- */
+    --ui-container: 1080px;
+    --ui-measure: 900px;
+    --ui-radius-xs: 4px;
+    --ui-radius-sm: 6px;
+    --ui-radius: 10px;
+    --ui-radius-lg: 16px;
+    --ui-hairline: 1px;
+
+    /* ---- 表面与描边 ---- */
+    --ui-bg: var(--bg-color);
+    --ui-text: var(--head-text-color);
+    --ui-accent: var(--primary-color);
+    --ui-error: var(--monkey-error-color);
+    /* 打对时的反馈色。默认跟随强调色，但它是独立令牌 ——
+       有些主题（nothing / nothing-dark）的强调色与错误色是同一个红，
+       那种情况下由 html[data-accent-clash] 改写成亮度表达，见文件末尾。 */
+    --ui-correct: var(--primary-color);
+
+    --ui-surface: color-mix(in srgb, var(--head-text-color) 5%, var(--bg-color));
+    --ui-surface-2: color-mix(in srgb, var(--head-text-color) 9%, var(--bg-color));
+    --ui-surface-3: color-mix(in srgb, var(--head-text-color) 14%, var(--bg-color));
+    --ui-line: color-mix(in srgb, var(--head-text-color) 13%, transparent);
+    --ui-line-strong: color-mix(in srgb, var(--head-text-color) 24%, transparent);
+
+    /* ---- 文本层级（同一基色分三档，保证对比度）---- */
+    --ui-dim: color-mix(in srgb, var(--head-text-color) 66%, transparent);
+    --ui-faint: color-mix(in srgb, var(--head-text-color) 44%, transparent);
+    --ui-ghost: color-mix(in srgb, var(--head-text-color) 28%, transparent);
+
+    /* ---- 强调色派生 ---- */
+    --ui-accent-soft: color-mix(in srgb, var(--primary-color) 15%, transparent);
+    --ui-accent-line: color-mix(in srgb, var(--primary-color) 45%, transparent);
+    --ui-error-soft: color-mix(in srgb, var(--monkey-error-color) 16%, transparent);
+
+    /* ---- 字体（三族分工，见 fonts.less）----
+     * 界面 / 英文正文 → Inter
+     * 汉字            → 思源黑体 Source Han Sans SC（默认，见下 data-hanzi）
+     * 代码 / 拼音编码 → JetBrains Mono
+     *
+     * 汉字可选两套，由「设置 → 汉字」写入 <html data-hanzi>：
+     *   sans（默认）思源黑体 — 与 Inter 同属新怪诞/人文黑体，骨架比例接近，
+     *                          中英混排时不跳；且有 400/500 两档字重可用。
+     *   kai          霞鹜文楷 — 楷体，笔画细、带书写气，适合长文阅读，
+     *                          但与 Inter 的风格差异明显，且只有 400 一档。
+     */
+    --ui-font-ui: 'Inter', -apple-system, BlinkMacSystemFont, 'PingFang SC',
+        'Hiragino Sans GB', 'Microsoft YaHei', 'Noto Sans SC', sans-serif;
+    --ui-font-read: 'Inter', -apple-system, BlinkMacSystemFont, 'PingFang SC',
+        'Hiragino Sans GB', 'Microsoft YaHei', 'Noto Sans SC', sans-serif;
+    --ui-font-hanzi: 'Source Han Sans SC', 'Noto Sans SC', 'PingFang SC', 'Hiragino Sans GB',
+        'Microsoft YaHei', 'Heiti SC', sans-serif;
+    --ui-font-mono: 'JetBrains Mono', 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo,
+        monospace;
+
+    /* ---- 打字排版：字号 / 行距 / 字距的唯一出处 ----
+     * 字距按字体的光学特性分别设定，不能一套值套所有字体：
+     *   Inter 22px 视觉偏松 → 负字距 -0.011em
+     *   思源黑体按固定字身框设计，边距已内置 → 0，再加字距会「散架」
+     *   楷体笔画细、字面窄 → 正字距 +0.04em 才透气（见 data-hanzi='kai'）
+     *   等宽字体本身有节奏 → 0，靠固定字宽对齐
+     *   大写小标签需要拉开 → +0.12em
+     */
+    --type-prose: 22px;
+    --type-prose-leading: 1.9;
+    --type-prose-tracking: -0.011em;
+    --type-prose-word-spacing: 0.01em;
+
+    --type-code: 16px;
+    --type-code-leading: 1.75;
+    --type-code-tracking: 0em;
+
+    /* 思源黑体字面几乎占满字身框，视觉尺寸比同 px 的楷体大一号，
+       故基准比楷体档小 1px，两者看起来才一样大。 */
+    --type-hanzi: 20px;
+    --type-hanzi-leading: 1.5;
+    --type-hanzi-tracking: 0em;
+
+    --type-code-letter: 13px;
+    --type-code-letter-tracking: 0em;
+
+    --track-ui: -0.004em;
+    --track-label: 0.12em;
+    --track-num: -0.02em;
+
+    /* ---- 动效 ---- */
+    --ease-out: cubic-bezier(0.2, 0.8, 0.3, 1);
+    --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+
+    /* ---- 覆盖旧打字区变量（原值在 default/darling/nothing 三个主题下是白底白字）---- */
+    --typing-panel-bg-color: var(--ui-surface);
+    --typing-panel-border-color: var(--ui-line);
+    --typing-text-color: var(--ui-text);
+    --typing-correct-color: var(--ui-correct);
+    --typing-error-color: var(--ui-error);
+    --typing-error-bg-color: var(--ui-error-soft);
+    --typing-current-bg-color: var(--ui-accent-soft);
+    --typing-caret-color: var(--ui-accent);
+    --typing-code-font: var(--ui-font-mono);
+}
+
+/* 不支持 color-mix 的旧浏览器：退回安全值，保证可读 */
+@supports not (color: color-mix(in srgb, red, blue)) {
+    :root {
+        --ui-surface: var(--bg-color);
+        --ui-surface-2: rgba(128, 128, 128, 0.14);
+        --ui-surface-3: rgba(128, 128, 128, 0.22);
+        --ui-line: rgba(128, 128, 128, 0.3);
+        --ui-line-strong: rgba(128, 128, 128, 0.5);
+        --ui-dim: var(--head-text-color);
+        --ui-faint: var(--head-text-color);
+        --ui-ghost: var(--head-text-color);
+        --ui-accent-soft: rgba(128, 128, 128, 0.16);
+        --ui-accent-line: var(--primary-color);
+        --ui-error-soft: rgba(220, 50, 47, 0.16);
+    }
+}
+
+/* ---- 字号档位（由「设置 → 字号」写入 <html data-scale>）---- */
+html[data-scale='m'] {
+    --type-prose: 24px;
+    --type-code: 17.5px;
+    --type-hanzi: 22px;
+    --type-code-letter: 14px;
+    /* 字号变大，Inter 需要更多负字距才能保持相同的视觉密度 */
+    --type-prose-tracking: -0.014em;
+}
+html[data-scale='l'] {
+    --type-prose: 26px;
+    --type-code: 19px;
+    --type-hanzi: 24px;
+    --type-code-letter: 15px;
+    --type-prose-tracking: -0.017em;
+}
+
+/* ---- 汉字字族（由「设置 → 汉字」写入 <html data-hanzi>）----
+ * 楷体的字面比黑体小、笔画也细，同样的视觉大小需要更大的 px 和正字距。
+ * 选择器带上 data-scale 组合，避免被上面的档位规则按源序覆盖。
+ */
+html[data-hanzi='kai'] {
+    --ui-font-hanzi: 'LXGW WenKai', 'Kaiti SC', 'STKaiti', 'PingFang SC', 'Hiragino Sans GB',
+        'Microsoft YaHei', serif;
+    --type-hanzi: 21px;
+    --type-hanzi-leading: 1.45;
+    --type-hanzi-tracking: 0.04em;
+}
+html[data-hanzi='kai'][data-scale='m'] {
+    --type-hanzi: 23px;
+}
+html[data-hanzi='kai'][data-scale='l'] {
+    --type-hanzi: 25px;
+}
+
+/* ==========================================================================
+ * 强调色与错误色撞色时的降级
+ * --------------------------------------------------------------------------
+ * nothing / nothing-dark 两个主题里 --primary-color 与 --monkey-error-color
+ * 是同一个红（#c8102e / #e0243e）。于是"打对"和"打错"同色，光标光效也是这个红，
+ * 红色彻底失去语义，错误看不出来。
+ *
+ * 规则：红色专用于错误；"正确"改用亮度表达（文本色满亮）。
+ * 由 src/utils/color.ts 的 isColorClash() 在运行时算出，写入 <html data-accent-clash>，
+ * 因此 40 套主题无需逐个手改，新增主题也会自动判定。
+ * 光标仍保留主题红 —— 它是位置指示，不是状态。
+ * ========================================================================== */
+html[data-accent-clash='1'] {
+    --ui-correct: var(--ui-text);
+}

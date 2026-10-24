@@ -1,0 +1,52 @@
+.StatBar {
+    display: flex;
+    align-items: flex-end;
+    gap: 26px;
+
+    &__item {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        line-height: 1;
+    }
+
+    &__value {
+        font-size: 17px;
+        font-weight: 600;
+        letter-spacing: var(--track-num);
+        color: var(--ui-ghost);
+        font-variant-numeric: tabular-nums;
+        transition: color 0.2s var(--ease-out);
+    }
+
+    &__label {
+        margin-top: 7px;
+        font-size: 10px;
+        letter-spacing: var(--track-label);
+        text-transform: uppercase;
+        color: var(--ui-ghost);
+        white-space: nowrap;
+    }
+
+    &.is-active &__value {
+        color: var(--ui-text);
+    }
+
+    &.is-active &__item:first-child &__value {
+        color: var(--ui-accent);
+    }
+}
+
+@media (max-width: 768px) {
+    .StatBar {
+        gap: 20px;
+
+        &__value {
+            font-size: 15px;
+        }
+        &__label {
+            font-size: 9px;
+            letter-spacing: 0.08em;
+        }
+    }
+}

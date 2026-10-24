@@ -1,185 +1,361 @@
+/* ==========================================================================
+ * 中文双拼 / 全拼
+ * 每个汉字上方是该字的编码，一字一组，逐字对齐：
+ *   双拼 —— 每字固定 2 码
+ *   全拼 —— 每字按实际拼音长度成组，长短不一
+ * 打完一个字的全部编码，该字的汉字即刻点亮（中文与拼音同步）
+ *
+ * 编码行与汉字行是两条独立的行，各自严格等距 —— 见下方 .word__code /
+ * .word__hanzi。早先的做法是「一字一列、列宽 = 该字拼音长度」，汉字间距
+ * 会被码长绑架（同样两字词，嘴/巴 相隔 25px、徽/章 相隔 34px），故废弃。
+ * ========================================================================== */
+
 .Monkey {
-    margin-top: 50px;
-    .word-count-radio {
-        padding: 0 0 30px 30px;
-        .ant-radio-button-wrapper {
-            color: var(--head-text-color);
-            background-color: transparent;
-            border: none;
-            opacity: 0.5;
-            &.ant-radio-button-wrapper-checked {
-                color: var(--word-count-checked-color);
-            }
-            &:not(:first-child)::before {
-                background-color: transparent;
-                color: var(--head-text-color);
-                content: '/';
-            }
-        }
-    }
-    .caret {
-        position: absolute;
-        width: 3px;
-        height: 30px;
-        border-radius: 10px;
-        background-color: var(--monkey-caret-color);
-        /* 发光 + 更跟手的移动动画 */
-        box-shadow:
-            0 0 6px var(--monkey-caret-color),
-            0 0 16px var(--monkey-caret-color);
-        animation-iteration-count: infinite;
-        animation-duration: 1s;
-        transition: transform 120ms cubic-bezier(0.2, 0.8, 0.3, 1);
-        transform: translate3d(26px, 7px, 0);
-        &.flash {
-            animation-name: caretFlash;
-        }
-        &.hide {
-            display: none;
-        }
-    }
-    .type-main-box {
-        transition: opacity 150ms;
+    /* JetBrains Mono 的字符宽度是 0.6em：13px 字号下自然步进 7.8px。
+     * 旧值 12px 给每个字母留了 4px 死白，全拼里 4 字母码就被撑到 48px，
+     * 反而比词组间距还宽 —— 字距层级被倒置，词就被看散了。
+     * 这里用自然步进，让编码回归「一串连续字符」的本来面貌。 */
+    --letter-w: 8px;
+    --letter-h: 19px;
+    --hanzi-size: var(--type-hanzi);
+
+    &__stage {
+        transition: opacity 0.15s var(--ease-out);
         opacity: 1;
-        &.fading {
+
+        &.is-fading {
             opacity: 0;
         }
-        &.hide {
+
+        &.is-hidden {
             display: none;
         }
     }
-    .words-box {
-        font-size: 22px;
+
+    &__panel {
+        padding: 32px 34px 28px;
+        background: var(--ui-surface);
+        border: 1px solid var(--ui-line);
+        border-radius: var(--ui-radius-lg);
+        box-shadow:
+            0 1px 0 rgba(255, 255, 255, 0.04) inset,
+            0 34px 70px -50px rgba(0, 0, 0, 0.6);
+        cursor: text;
+        transition: border-color 0.25s var(--ease-out);
+    }
+
+    &__typebox {
+        position: relative;
+    }
+
+    &__foot {
         display: flex;
-        flex-wrap: wrap;
-        width: 100%;
-        align-content: flex-start;
-        color: var(--head-text-color);
-        overflow: hidden;
-        user-select: none;
-        min-width: 920px;
-        .word {
-            margin: 7px 7px;
-            opacity: 0.8;
-            &.correct {
-                color: var(--primary-color);
-                opacity: 1;
-                /* 上词弹跳动画 */
-                animation: wordCommit 220ms ease-out;
-                .label {
-                    text-shadow: 0 0 6px;
-                }
-            }
-            &.wrong {
-                color: var(--monkey-error-color);
-                opacity: 1;
-            }
-            .label {
-                font-size: 16px;
-                line-height: 16px;
-                text-align: center;
-                position: relative;
-                top: 3px;
-                color: var(--monkey-sub-color);
-            }
-            .letter {
-                display: inline-block;
-                width: 14px;
-                opacity: 0.6;
-                &.correct {
-                    color: var(--primary-color);
-                    opacity: 1;
-                    /* 正确发光 + 弹跳 */
-                    text-shadow: 0 0 8px;
-                    animation: letterPop 160ms ease-out;
-                }
-                &.wrong {
-                    color: var(--monkey-error-color);
-                    opacity: 1;
-                    /* 错误红色发光 + 抖动 */
-                    text-shadow: 0 0 8px;
-                    animation: letterShake 150ms ease-in-out;
-                }
-            }
-        }
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        margin-top: 16px;
     }
-    .hidden-input {
-        position: absolute;
-        left: -100vw;
-    }
-    .tip-line {
-        margin-top: 50px;
-        font-size: 12px;
-        text-align: center;
-        color: var(--head-text-color);
-        opacity: 0.5;
-        transition: opacity 500ms linear;
+
+    &__tip {
+        font-size: 11.5px;
+        color: var(--ui-ghost);
+
         code {
-            padding: 1px 3px;
-            margin: 0 3px;
-            border-radius: 2px;
-            background-color: var(--head-text-color);
-            color: var(--bg-color);
-        }
-        &.hide {
-            opacity: 0;
+            padding: 1px 5px;
+            margin: 0 2px;
+            font-family: var(--ui-font-mono);
+            font-size: 10.5px;
+            color: var(--ui-faint);
+            border: 1px solid var(--ui-line);
+            border-bottom-width: 2px;
+            border-radius: var(--ui-radius-xs);
         }
     }
-    .type-result-box {
+
+    &__result {
         display: none;
-        &.show {
+        margin-top: 4px;
+
+        &.is-shown {
             display: block;
         }
     }
-    .reload-line {
-        margin-top: 80px;
-        text-align: center;
+
+    .hidden-input {
+        position: absolute;
+        left: -100vw;
+        width: 1px;
+        height: 1px;
+        opacity: 0;
+    }
+}
+
+/* ---------- 词块容器 ---------- */
+.words-box {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    align-content: flex-start;
+    /* 三级间距，让「字 · 词 · 行」一眼可分：
+     *   字内 2px  ·  词间 20px  ·  行间 16px
+     * 词间约为字内的 10 倍，词组才不会被读成一长串。
+     * 旧版字内 3px、词间 5px，两者太接近，词界完全糊掉。 */
+    column-gap: 20px;
+    row-gap: 16px;
+    width: 100%;
+    /* 30 词在双拼下是 3 行（约 195px），全拼 4 行（约 260px）。
+       取 3 行的自然高度做下限，双拼时不再拖出一大块空白 */
+    min-height: 200px;
+    padding: 2px 0;
+    color: var(--ui-text);
+    user-select: none;
+    /* 不裁剪：当前词的浮起底框会向外扩 11px，裁掉就断边 */
+    overflow: visible;
+}
+
+/* ---------- 词组：不可拆分的最小排版单元 ----------
+ * 词内是两条互相独立的行，各自严格等距：
+ *   编码行 —— 等宽字符连续排列，步进恒为 --letter-w
+ *   汉字行 —— 汉字统一步进，步进恒为 --hanzi-size + 2px
+ * 为什么必须解耦：全拼的拼音码长 2–6 字母不等（ye / xing / zhuang）。
+ * 一旦让"每字一列、列宽 = 该字码长"，汉字间距就被拼音长度绑架 ——
+ * 实测 嘴/巴 25px、徽/章 34px、应/该 30px，同为两字词却差 36%，
+ * 而且短码（ba）被撑到汉字宽度，码流里凭空多出 6px 空隙。
+ * 拆成两行后，两条线各自绝对均匀，词与词之间再用 20px 拉开层级。
+ */
+.words-box .word {
+    position: relative;
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    /* 词组整体参与换行，绝不从中间断开到下一行 */
+    flex: 0 0 auto;
+    white-space: nowrap;
+    break-inside: avoid;
+    page-break-inside: avoid;
+}
+
+/* 当前词组：用伪元素画底框，不占布局 —— 词与词的间距因此保持严格一致，
+   不会因为「高亮时变宽」而让整行文字跳动 */
+.words-box .word.is-active::before {
+    content: '';
+    position: absolute;
+    inset: -7px -11px -6px;
+    background: var(--ui-surface-2);
+    border: 1px solid var(--ui-line-strong);
+    border-radius: 9px;
+}
+
+/* 编码行 */
+.words-box .word__code {
+    /* 提层：绝对定位的伪元素默认画在文字之上，这里把文字压回来 */
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* 音节之间恒定 2px：与码长无关，所以码流永远不会忽紧忽松 */
+    column-gap: 2px;
+    height: var(--letter-h);
+    line-height: var(--letter-h);
+}
+
+/* 一个音节的码（双拼恒 2 字母，全拼 1–6 字母） */
+.words-box .code-group {
+    display: flex;
+    align-items: center;
+}
+
+/* 汉字行 */
+.words-box .word__hanzi {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    margin-top: 4px;
+}
+
+/* 整词判错（含全拼模式下空格跳过的词）：逐字红已覆盖打错的字，
+   这里兜住"没打就跳过"的字，让整词状态一眼可见 */
+.words-box .word.is-wrong .hanzi {
+    color: var(--ui-error);
+    opacity: 1;
+}
+
+/* ---------- 单字 ---------- */
+.words-box .hanzi {
+    /* min-width 而非 width：正常单字恰好等距，
+       多音字兜底成整词一组时（charGroups 只有一项）也不会被压扁 */
+    flex: 0 0 auto;
+    min-width: calc(var(--hanzi-size) + 2px);
+    text-align: center;
+    font-family: var(--ui-font-hanzi);
+    font-size: var(--hanzi-size);
+    font-weight: 400;
+    line-height: var(--type-hanzi-leading);
+    letter-spacing: var(--type-hanzi-tracking);
+    color: var(--ui-text);
+    opacity: 0.78;
+    transition:
+        color 0.16s var(--ease-out),
+        opacity 0.16s var(--ease-out);
+}
+
+.words-box .letter {
+    display: inline-block;
+    width: var(--letter-w);
+    text-align: center;
+    font-family: var(--ui-font-mono);
+    font-size: var(--type-code-letter);
+    font-weight: 400;
+    line-height: var(--letter-h);
+    letter-spacing: var(--type-code-letter-tracking);
+    font-variant-ligatures: none;
+    color: var(--ui-dim);
+    transition: color 80ms linear;
+
+    &.correct {
+        color: var(--ui-correct);
+        text-shadow: 0 0 9px color-mix(in srgb, var(--ui-correct) 40%, transparent);
+    }
+
+    &.wrong {
+        color: var(--ui-error);
+        text-shadow: 0 0 9px color-mix(in srgb, var(--ui-error) 35%, transparent);
+    }
+
+    /* 全拼模式下多打的字母：接在编码行末尾，不再挤进最后一个字 */
+    &.extra-letter {
+        width: auto;
+        height: var(--letter-h);
+        line-height: var(--letter-h);
+        align-self: center;
+        margin-left: 2px;
+        padding: 0 1px;
+    }
+}
+
+/* 当前词组：编码与汉字同时提亮，视线聚焦 */
+.words-box .word.is-active .letter:not(.correct):not(.wrong) {
+    color: var(--ui-text);
+}
+
+.words-box .word.is-active .hanzi {
+    opacity: 1;
+}
+
+/* 撞色主题（见 tokens.less 末尾）下，"打对"靠亮度表达，
+   所以当前词里未输入的字母/汉字不能再提亮 —— 否则"已正确"与"未输入"
+   会变成同一个亮度，逐字同步的反馈就消失了。位置由光标和词框指示。 */
+html[data-accent-clash='1'] .words-box .word.is-active .letter:not(.correct):not(.wrong) {
+    color: var(--ui-dim);
+}
+
+html[data-accent-clash='1'] .words-box .word.is-active .hanzi:not(.is-done):not(.is-bad) {
+    opacity: 0.78;
+}
+
+/* 该字编码打满：汉字点亮（中文与拼音同步） */
+.words-box .hanzi.is-done {
+    color: var(--ui-correct);
+    opacity: 1;
+}
+
+.words-box .hanzi.is-bad {
+    color: var(--ui-error);
+    opacity: 1;
+}
+
+/* ---------- 光标 ---------- */
+.Monkey .caret {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 2px;
+    border-radius: 2px;
+    background: var(--ui-accent);
+    /* 旧值是实色 6px + 16px 双层辉光：编码步进收到 8px 后，
+       辉光会盖住光标右侧两个字母，未输入的字看着像已输入（误读为已正确）。
+       这里改成带透明的光晕，保留指示性但不染色邻近字形。 */
+    box-shadow: 0 0 4px var(--ui-accent);
+    box-shadow:
+        0 0 5px color-mix(in srgb, var(--ui-accent) 55%, transparent),
+        0 0 12px color-mix(in srgb, var(--ui-accent) 26%, transparent);
+    transition: transform 110ms var(--ease-out);
+    pointer-events: none;
+
+    &.flash {
+        animation: caretFlash 1.05s infinite;
+    }
+
+    &.hide {
+        display: none;
     }
 }
 
 @keyframes caretFlash {
     0%,
     100% {
-        opacity: 0;
+        opacity: 0.15;
     }
+
     50% {
         opacity: 1;
     }
 }
 
-@keyframes letterPop {
-    0% {
-        transform: scale(1);
+/* ==========================================================================
+ * 响应式
+ * ========================================================================== */
+
+@media (max-width: 900px) {
+    .Monkey {
+        /* 12px 字号 → 自然步进 7.2px */
+        --letter-w: 7.5px;
+        --letter-h: 18px;
     }
-    40% {
-        transform: scale(1.35);
+
+    .words-box {
+        min-height: 184px;
+        column-gap: 18px;
+        row-gap: 14px;
     }
-    100% {
-        transform: scale(1);
+
+    .words-box .letter {
+        font-size: 12px;
     }
 }
 
-@keyframes letterShake {
-    0%,
-    100% {
-        transform: translateX(0);
+@media (max-width: 768px) {
+    .Monkey {
+        /* 11px 字号 → 自然步进 6.6px */
+        --letter-w: 7px;
+        --hanzi-size: 19px;
     }
-    25% {
-        transform: translateX(-3px);
-    }
-    75% {
-        transform: translateX(3px);
-    }
-}
 
-@keyframes wordCommit {
-    0% {
-        transform: scale(1);
+    .Monkey__panel {
+        padding: 20px 16px 18px;
+        border-radius: 12px;
     }
-    45% {
-        transform: scale(1.08);
+
+    .words-box {
+        min-height: 168px;
+        column-gap: 13px;
+        row-gap: 12px;
     }
-    100% {
-        transform: scale(1);
+
+    /* 窄屏收紧浮起框，避免贴边 */
+    .words-box .word.is-active::before {
+        inset: -5px -8px -4px;
+        border-radius: 7px;
+    }
+
+    .words-box .letter {
+        font-size: 11px;
+    }
+
+    .Monkey__tip {
+        display: none;
     }
 }

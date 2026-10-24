@@ -4,21 +4,43 @@ export default {
         canvas.height = 64;
         canvas.width = 64;
         const ctx = canvas.getContext('2d');
-        if (ctx) {
-            ctx.fillStyle = backColor;
-            ctx.fillRect(0, 0, 64, 64);
-            // ctx.beginPath();
-            // ctx.arc(32, 32, 32, 0, 2 * Math.PI);
-            // ctx.fill();
-        }
+        if (!ctx) return;
 
-        const ctx2 = canvas.getContext('2d');
-        if (ctx2) {
-            ctx2.font = '24px Arial';
-            ctx2.fillStyle = fontColor;
-            ctx2.fillText('TCN', 7, 42);
-        }
-        const base64Url = canvas.toDataURL('image/jpg');
+        // 底色
+        ctx.fillStyle = backColor;
+        ctx.fillRect(0, 0, 64, 64);
+
+        // 键帽轮廓 + 折线（与顶栏标志同一形状）
+        ctx.strokeStyle = fontColor;
+        ctx.lineWidth = 3.4;
+        ctx.lineJoin = 'round';
+        ctx.lineCap = 'round';
+
+        const x = 9.5;
+        const y = 19.5;
+        const w = 45;
+        const h = 29;
+        const r = 8;
+        ctx.beginPath();
+        ctx.moveTo(x + r, y);
+        ctx.lineTo(x + w - r, y);
+        ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+        ctx.lineTo(x + w, y + h - r);
+        ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+        ctx.lineTo(x + r, y + h);
+        ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+        ctx.lineTo(x, y + r);
+        ctx.quadraticCurveTo(x, y, x + r, y);
+        ctx.closePath();
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.moveTo(20.5, 39.5);
+        ctx.lineTo(32, 26.5);
+        ctx.lineTo(43.5, 39.5);
+        ctx.stroke();
+
+        const base64Url = canvas.toDataURL('image/png');
         document.getElementById('site-icon')?.setAttribute('href', base64Url);
     },
 };

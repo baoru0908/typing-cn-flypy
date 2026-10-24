@@ -1,21 +1,36 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
     <head>
         <meta charset="UTF-8" />
         <link id="site-icon" rel="icon" type="image/svg+xml" href="/src/favicon.svg" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <meta name="theme-color" content="#000000" />
-        <meta name="description" content="Type joy in CN" />
-        <meta name="description" content="中文打字练习" />
+        <meta name="theme-color" content="#282c34" />
+        <meta
+            name="description"
+            content="鹤键 CraneType —— 中文小鹤双拼打字练习，含全拼 / 双拼、英文、代码与自定义文本四种模式。"
+        />
+        <meta name="apple-mobile-web-app-title" content="鹤键" />
+        <meta property="og:title" content="鹤键 CraneType · 中文双拼打字练习" />
+        <meta
+            property="og:description"
+            content="两键一字，打满自动上词。中文双拼 / 英文 / 代码 / 自定义，40 套主题。"
+        />
+        <meta property="og:type" content="website" />
+        <!-- 汉字字族：两套都只声明 @font-face，浏览器按 unicode-range
+             只下载页面实际出现的字所在的分片，未选用的那套不会产生任何请求。 -->
+        <!-- 思源黑体 Source Han Sans SC（默认，202 个分片 / 400+500 两档字重） -->
+        <link rel="stylesheet" href="/fonts/shs.css" />
+        <!-- 霞鹜文楷 LXGW WenKai（可选，97 个分片 / 400 一档） -->
+        <link rel="stylesheet" href="/fonts/lxgw.css" />
         <link id="default-theme" rel="stylesheet" type="text/css" href="/themes/default.css" />
         <link id="current-theme" rel="stylesheet" type="text/css" href="/themes/default.css" />
-        <title>typing-cn</title>
+        <title>鹤键 CraneType · 中文双拼打字练习</title>
         <script>
             if (window.location.href.includes('gitee.io')) {
                 var _hmt = _hmt || [];
                 (function () {
                     var hm = document.createElement('script');
-                    hm.src = 'https://hm.baidu.com/hm.js?754de54e923b825a0fca03669e6ab844';
+                    hm.src = 'https://hm.baidu.com/hm.js?754de54e923b825a0fca0369e6ab844';
                     var s = document.getElementsByTagName('script')[0];
                     s.parentNode.insertBefore(hm, s);
                 })();

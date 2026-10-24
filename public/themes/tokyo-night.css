@@ -1,0 +1,39 @@
+/* tokyo night 主题 */
+:root {
+    --typing-panel-bg-color: var(--home-window-bg-color);
+    --typing-panel-border-color: transparent;
+    --typing-text-color: var(--head-text-color);
+    --typing-correct-color: var(--primary-color);
+    --typing-error-color: var(--monkey-error-color);
+    --typing-error-bg-color: rgba(245, 34, 45, 0.14);
+    --typing-current-bg-color: var(--home-input-focus-color);
+    --typing-caret-color: var(--monkey-caret-color);
+    --typing-code-font: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+    --primary-color: #7aa2f7;
+    --success-color: #9ece6a;
+    --error-color: #f7768e;
+    --bg-color: #1a1b26;
+    --head-text-color: #c0caf5;
+    --home-window-bg-color: rgba(36, 40, 59, 0.78);
+    --home-window-text-color: #c0caf5;
+    --home-window-text-sub-color: rgba(169, 177, 202, 0.6);
+    --home-window-text-acting-bg-color: rgba(122, 162, 247, 0.2);
+    --home-input-focus-color: rgba(122, 162, 247, 0.14);
+    --home-countdown-bg-color: rgba(65, 72, 104, 0.85);
+    --home-countdown-text-color: #c0caf5;
+    --home-reload-btn-bg-color: rgba(122, 162, 247, 0.75);
+    --home-reload-btn-focus-color: rgba(122, 162, 247, 0.2);
+    --home-reload-btn-text-color: #1a1b26;
+    --word-count-checked-color: #7aa2f7;
+    --monkey-caret-color: #7aa2f7;
+    --monkey-sub-color: rgba(169, 177, 202, 0.55);
+    --monkey-error-color: #f7768e;
+}
+
+body {
+    --body-back-image: linear-gradient(160deg, #16161e 0%, #1a1b26 55%, #24283b 100%);
+}
+
+.TypingArea__text {
+    border-color: rgba(122, 162, 247, 0.16);
+}

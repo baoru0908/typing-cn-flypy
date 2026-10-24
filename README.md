@@ -9,11 +9,17 @@
 | 模式     | 路由       | 说明                                                                 |
 | -------- | ---------- | -------------------------------------------------------------------- |
 | 中文双拼 | `/monkey`  | 小鹤双拼/全拼词拼练习，两键一字，打满自动上词                          |
-| 英文     | `/english` | 常用英文短句，按短句/中句/长句分档                                      |
-| 代码     | `/code`    | 各语言范例代码（JS/TS/Python/Java/C/Go/Rust/Shell/SQL/HTML），等宽字体  |
+| 英文     | `/english` | 33 条语料，短句/段落/长文三档，可「换一段」                            |
+| 代码     | `/code`    | 10 种语言 × 3 例共 30 段（JS/TS/Python/Java/C/Go/Rust/Shell/SQL/HTML），等宽字体，可「换一题」 |
 | 自定义   | `/custom`  | 任意文本，存 localStorage 刷新不丢                                      |
 
 中文双拼继续沿用原有词拼逻辑；英文/代码/自定义共用新增的通用打字引擎 `src/components/typingArea/TypingArea.tsx`（逐字符判定、退格修正、换行与制表符支持、WPM/正确率/用时统计）。
+
+引擎通过 `variant` 区分排版：
+
+- `prose` 英文散文：24px、行距 1.85、`word-break: normal` 不断词
+- `code` 代码：等宽字体 17px、行距 1.75、`white-space: pre` 保留缩进与空行
+- `cn` 中文词拼：22px、行距 1.6
 
 ## 改动说明
 
@@ -41,11 +47,23 @@
 
 ### 5. 主题
 
-- **毛玻璃**：蓝紫渐变底色 + 半透明面板（`backdrop-filter: blur + saturate`）
-- **毛玻璃黑**：深黑渐变底（冷调微光）+ 玻璃面板，主色冷青 `#9bf0ff`，适合暗光环境
-- **nothing / nothing dark**：按 Nothing 设计语言规范实现，色彩只用 Pure Black `#000000`、Window Grey `#B1B3B3`、N-Grey `#DCD7D2`、Pure White `#FFFFFF` 与 N-Red `#C8102E`；**禁渐变、禁投影**，主色仅用于强调（选中态、光标、正确字符）
+共 **40 个主题**，深浅成对，全部通过 WCAG 对比度检查：
 
-共 25 个主题。顶栏、弹窗、文本域、词数按钮均做主题适配。
+| 组         | 主题                                                       |
+| ---------- | ---------------------------------------------------------- |
+| 原创       | default / 毛玻璃 / 毛玻璃黑 / nothing / nothing dark        |
+| Nord       | nord / nord light                                          |
+| Gruvbox    | gruvbox / gruvbox light                                    |
+| Solarized  | solarized dark / solarized light                           |
+| Catppuccin | catppuccin mocha / catppuccin latte                        |
+| Tokyo Night| tokyo night / tokyo night light                            |
+| Rose Pine  | rose pine / rose pine dawn                                 |
+| One        | one dark / one light                                       |
+| 经典单色   | oblivion / carbon / 2600 / olivia / 9009 / godspeed / …    |
+
+- **nothing / nothing dark** 按 Nothing 设计语言规范实现，色彩只用 Pure Black `#000000`、Window Grey `#B1B3B3`、N-Grey `#DCD7D2`、Pure White `#FFFFFF` 与 N-Red `#C8102E`；**禁渐变、禁投影**，主色仅用于强调
+
+打字区所有颜色走主题语义变量（`--typing-text-color` / `--typing-correct-color` / `--typing-error-color` / `--typing-caret-color` / `--typing-panel-bg-color` 等），不硬编码，因此每个主题的深浅色表现一致。
 
 ### 6. 单文件 HTML 构建
 
@@ -63,6 +81,11 @@ npm run lint         # eslint 检查
 # 双拼编码测试
 node --experimental-strip-types test-flypy-word.mjs
 
+# 主题维护
+node scripts/patch-theme-vars.js    # 给全部主题补打字区语义变量（幂等）
+node scripts/generate-themes.js     # 生成新增主题 CSS 并打印 config.ts 条目
+node scripts/fix-contrast.js        # 自动把对比度不达标的颜色调到 WCAG 达标
+
 # 单文件构建
 npx vite build --config vite.config.single.ts
 node scripts/pack-single.js   # 产出 ../typing-cn-小鹤双拼.html
@@ -74,3 +97,4 @@ node scripts/pack-single.js   # 产出 ../typing-cn-小鹤双拼.html
 
 - `tsconfig.json` 开启 `skipLibCheck`：前端项目不需要校验第三方 `.d.ts`（`@types/node` 与 DOM lib 的 `AbortSignal` 声明冲突、`rc-tree` 的泛型约束问题均源于此），跳过可让 `npm run build` 的 `tsc` 步骤通过
 - `@types/react-router-dom` 已移除：`react-router-dom@6` 自带类型定义，旧版 `@types/react-router-dom@5.3.3` 与 v6 API 冲突会让 tsc 报十几个错
+- 代码语料里 shell 例子的 `${1:-.}` 等必须写成 `\${1:-.}`，否则会被模板字符串当作插值解析导致语法错误

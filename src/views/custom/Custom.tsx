@@ -41,7 +41,7 @@ const Custom: React.FC = () => {
                     placeholder="输入自定义文本，失焦后生效"
                 />
             </div>
-            <TypingArea text={text} />
+            <TypingArea text={text} variant="prose" />
         </div>
     );
 };

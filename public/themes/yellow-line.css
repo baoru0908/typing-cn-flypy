@@ -1,4 +1,14 @@
 :root {
+    --typing-panel-bg-color: var(--home-window-bg-color);
+    --typing-panel-border-color: transparent;
+    --typing-text-color: var(--head-text-color);
+    --typing-correct-color: var(--primary-color);
+    --typing-error-color: var(--monkey-error-color);
+    --typing-error-bg-color: rgba(245, 34, 45, 0.14);
+    --typing-current-bg-color: var(--home-input-focus-color);
+    --typing-caret-color: var(--monkey-caret-color);
+    --typing-code-font: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+
     --primary-color: #FBC300;
     --success-color: #00FFF9;
     --error-color: #E400D4;

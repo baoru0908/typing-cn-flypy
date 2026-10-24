@@ -12,6 +12,7 @@ import TypeResult from '@/components/typeResult/TypeResult';
 
 const BACKSPACE_CODE = 8;
 const TAB_CODE = 9;
+const ENTER_CODE = 13;
 
 interface CharState {
     char: string;
@@ -27,11 +28,16 @@ export interface TypingResult {
     secs: number;
 }
 
+/** 排版变体：prose=散文、code=代码、cn=中文词拼 */
+export type TypingVariant = 'prose' | 'code' | 'cn';
+
 interface Props {
     /** 待打文本，\n 视为换行 */
     text: string;
     /** 是否把制表符按 4 空格展开（代码模式） */
     expandTabs?: boolean;
+    /** 排版变体，决定字体/字号/行距/换行策略 */
+    variant?: TypingVariant;
     /** 结果回调 */
     onResult?: (result: TypingResult) => void;
 }
@@ -42,7 +48,7 @@ const TAB_WIDTH = 4;
 const expandTabs = (text: string, width = TAB_WIDTH) => text.replace(/\t/g, ' '.repeat(width));
 
 const TypingArea: React.FC<Props> = (props) => {
-    const { text, expandTabs: useExpandTabs = false, onResult } = props;
+    const { text, expandTabs: useExpandTabs = false, variant = 'prose', onResult } = props;
     const rawText = useExpandTabs ? expandTabs(text) : text;
 
     const inputEl = useRef(null);
@@ -149,6 +155,7 @@ const TypingArea: React.FC<Props> = (props) => {
     }, [index]);
 
     const onKeyDown = (evt: React.KeyboardEvent) => {
+        // Tab 保留给浏览器（切焦点），其余按键一律接管
         if (evt.keyCode !== TAB_CODE) {
             evt.preventDefault();
             evt.stopPropagation();
@@ -156,6 +163,11 @@ const TypingArea: React.FC<Props> = (props) => {
         if (showResult) return;
         if (evt.keyCode === BACKSPACE_CODE) {
             backspace();
+            return;
+        }
+        // 换行符：文本里的 \n 用 Enter 输入
+        if (evt.keyCode === ENTER_CODE) {
+            inputForward('\n');
             return;
         }
         if (evt.key.length === 1) {
@@ -183,7 +195,7 @@ const TypingArea: React.FC<Props> = (props) => {
     };
 
     return (
-        <div className="TypingArea">
+        <div className={`TypingArea TypingArea--${variant}`}>
             <Row justify="center" align="middle">
                 <Col flex="900px">
                     <div
@@ -205,9 +217,17 @@ const TypingArea: React.FC<Props> = (props) => {
                             if (i === index && !showResult) cls += ' current';
                             // 空格在错误时用背景块提示，避免看不见
                             if (c.isCorrect === false && isSpace) cls += ' char-space-wrong';
+                            // 换行符渲染为可见换行：代码模式保留空行与缩进
+                            if (c.char === '\n') {
+                                return (
+                                    <span className={cls} key={i}>
+                                        {'\n'}
+                                    </span>
+                                );
+                            }
                             return (
                                 <span className={cls} key={i}>
-                                    {isSpace && c.char !== '\n' ? '\u00A0' : c.char}
+                                    {isSpace ? '\u00A0' : c.char}
                                 </span>
                             );
                         })}

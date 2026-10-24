@@ -1,55 +1,107 @@
+/* 通用打字区样式
+ * 三个变体：
+ *   prose — 英文/中文散文：衬线友好的无衬线、宽松行距、不断词
+ *   code  — 代码：等宽字体、保留缩进与空行
+ *   cn    — 中文词拼：紧凑行距
+ * 全部颜色走主题语义变量，不硬编码，保证各主题深浅色一致。
+ */
 .TypingArea {
     &__text {
-        font-size: 22px;
-        line-height: 1.7;
-        color: var(--head-text-color);
-        white-space: pre-wrap;
-        word-break: break-all;
+        position: relative;
+        color: var(--typing-text-color);
         user-select: none;
-        min-height: 200px;
+        min-height: 220px;
+        border-radius: 12px;
+        padding: 22px 24px;
+        background-color: var(--typing-panel-bg-color);
+        border: 1px solid var(--typing-panel-border-color);
+        transition:
+            color 80ms linear,
+            background-color 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
+
         .char {
             position: relative;
             border-radius: 2px;
             transition: color 80ms linear;
+            /* 默认（prose）不断词：英文按单词整体换行 */
+            white-space: pre-wrap;
+            word-break: normal;
+            overflow-wrap: break-word;
             &.pending {
-                opacity: 0.55;
+                opacity: 0.5;
             }
             &.correct {
-                color: var(--primary-color);
+                color: var(--typing-correct-color);
                 opacity: 1;
-                text-shadow: 0 0 8px;
+                text-shadow: 0 0 8px currentColor;
             }
             &.wrong {
-                color: var(--monkey-error-color);
+                color: var(--typing-error-color);
                 opacity: 1;
-                background-color: rgba(245, 34, 45, 0.14);
-                text-shadow: 0 0 8px;
+                background-color: var(--typing-error-bg-color);
+                text-shadow: 0 0 8px currentColor;
             }
             &.extra {
-                color: var(--monkey-error-color);
+                color: var(--typing-error-color);
                 opacity: 1;
-                text-decoration: underline wavy var(--monkey-error-color);
+                text-decoration: underline wavy currentColor;
             }
             &.current {
-                background-color: var(--home-input-focus-color);
+                background-color: var(--typing-current-bg-color);
             }
         }
         .char-space-wrong {
-            background-color: rgba(245, 34, 45, 0.14);
+            background-color: var(--typing-error-bg-color);
         }
     }
+
+    /* 英文散文：更舒适的字号与行距 */
+    &--prose &__text {
+        font-size: 24px;
+        line-height: 1.85;
+        letter-spacing: 0.01em;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC',
+            'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+        text-align: left;
+        max-width: 860px;
+        margin: 0 auto;
+    }
+
+    /* 代码：等宽、行距紧、保留空白 */
+    &--code &__text {
+        font-family: var(--typing-code-font);
+        font-size: 17px;
+        line-height: 1.75;
+        letter-spacing: 0;
+        tab-size: 4;
+        max-width: 900px;
+        margin: 0 auto;
+        .char {
+            /* 代码必须精确：空白字符也要可见占位 */
+            white-space: pre;
+        }
+    }
+
+    /* 中文词拼：紧凑 */
+    &--cn &__text {
+        font-size: 22px;
+        line-height: 1.6;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC',
+            'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+        max-width: 900px;
+        margin: 0 auto;
+    }
+
     &__caret {
         position: absolute;
         width: 2px;
         height: 1.5em;
         border-radius: 2px;
-        background-color: var(--monkey-caret-color);
+        background-color: var(--typing-caret-color);
         box-shadow:
-            0 0 6px var(--monkey-caret-color),
-            0 0 14px var(--monkey-caret-color);
-        transition:
-            transform 90ms cubic-bezier(0.2, 0.8, 0.3, 1),
-            height 90ms linear;
+            0 0 6px var(--typing-caret-color),
+            0 0 14px var(--typing-caret-color);
+        transition: transform 90ms cubic-bezier(0.2, 0.8, 0.3, 1);
         pointer-events: none;
         &.flash {
             animation: caretFlash 1s infinite;

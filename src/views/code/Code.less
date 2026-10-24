@@ -1,6 +1,9 @@
 .Code {
     margin-top: 50px;
     .code-lang-radio {
+        display: flex;
+        align-items: center;
+        gap: 18px;
         padding: 0 0 30px 30px;
         .ant-radio-button-wrapper {
             color: var(--head-text-color);
@@ -9,6 +12,7 @@
             opacity: 0.5;
             &.ant-radio-button-wrapper-checked {
                 color: var(--word-count-checked-color);
+                opacity: 1;
             }
             &:not(:first-child)::before {
                 background-color: transparent;
@@ -16,10 +20,16 @@
                 content: '/';
             }
         }
-    }
-    .TypingArea__text {
-        font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
-        font-size: 18px;
-        line-height: 1.9;
+        .code-next-line {
+            .ant-btn {
+                color: var(--head-text-color);
+                opacity: 0.55;
+                &:hover,
+                &:focus {
+                    color: var(--primary-color);
+                    opacity: 1;
+                }
+            }
+        }
     }
 }

@@ -1,0 +1,39 @@
+/* gruvbox light 主题 */
+:root {
+    --typing-panel-bg-color: var(--home-window-bg-color);
+    --typing-panel-border-color: transparent;
+    --typing-text-color: var(--head-text-color);
+    --typing-correct-color: var(--primary-color);
+    --typing-error-color: var(--monkey-error-color);
+    --typing-error-bg-color: rgba(245, 34, 45, 0.14);
+    --typing-current-bg-color: var(--home-input-focus-color);
+    --typing-caret-color: var(--monkey-caret-color);
+    --typing-code-font: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+    --primary-color: #b57614;
+    --success-color: #79740e;
+    --error-color: #cc241d;
+    --bg-color: #fbf1c7;
+    --head-text-color: #3c3836;
+    --home-window-bg-color: rgba(255, 255, 255, 0.8);
+    --home-window-text-color: #3c3836;
+    --home-window-text-sub-color: rgba(60, 56, 54, 0.55);
+    --home-window-text-acting-bg-color: rgba(181, 118, 20, 0.16);
+    --home-input-focus-color: rgba(181, 118, 20, 0.12);
+    --home-countdown-bg-color: rgba(235, 219, 178, 0.85);
+    --home-countdown-text-color: #3c3836;
+    --home-reload-btn-bg-color: rgba(181, 118, 20, 0.8);
+    --home-reload-btn-focus-color: rgba(181, 118, 20, 0.16);
+    --home-reload-btn-text-color: #fbf1c7;
+    --word-count-checked-color: #b57614;
+    --monkey-caret-color: #b57614;
+    --monkey-sub-color: rgba(102, 92, 84, 0.75);
+    --monkey-error-color: #cc241d;
+}
+
+body {
+    --body-back-image: linear-gradient(160deg, #f2e5bc 0%, #fbf1c7 55%, #ebdbb2 100%);
+}
+
+.TypingArea__text {
+    border-color: rgba(181, 118, 20, 0.2);
+}

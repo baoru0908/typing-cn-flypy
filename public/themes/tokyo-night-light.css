@@ -1,0 +1,39 @@
+/* tokyo night light 主题 */
+:root {
+    --typing-panel-bg-color: var(--home-window-bg-color);
+    --typing-panel-border-color: transparent;
+    --typing-text-color: var(--head-text-color);
+    --typing-correct-color: var(--primary-color);
+    --typing-error-color: var(--monkey-error-color);
+    --typing-error-bg-color: rgba(245, 34, 45, 0.14);
+    --typing-current-bg-color: var(--home-input-focus-color);
+    --typing-caret-color: var(--monkey-caret-color);
+    --typing-code-font: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+    --primary-color: #2d4f9e;
+    --success-color: #3f7d3a;
+    --error-color: #c0365c;
+    --bg-color: #d5d6db;
+    --head-text-color: #343b58;
+    --home-window-bg-color: rgba(255, 255, 255, 0.85);
+    --home-window-text-color: #343b58;
+    --home-window-text-sub-color: rgba(52, 59, 88, 0.6);
+    --home-window-text-acting-bg-color: rgba(45, 79, 158, 0.14);
+    --home-input-focus-color: rgba(45, 79, 158, 0.1);
+    --home-countdown-bg-color: rgba(203, 206, 219, 0.85);
+    --home-countdown-text-color: #343b58;
+    --home-reload-btn-bg-color: rgba(45, 79, 158, 0.8);
+    --home-reload-btn-focus-color: rgba(45, 79, 158, 0.14);
+    --home-reload-btn-text-color: #ffffff;
+    --word-count-checked-color: #2d4f9e;
+    --monkey-caret-color: #2d4f9e;
+    --monkey-sub-color: rgba(52, 59, 88, 0.55);
+    --monkey-error-color: #c0365c;
+}
+
+body {
+    --body-back-image: linear-gradient(160deg, #c8cad3 0%, #d5d6db 55%, #cbcedb 100%);
+}
+
+.TypingArea__text {
+    border-color: rgba(45, 79, 158, 0.2);
+}

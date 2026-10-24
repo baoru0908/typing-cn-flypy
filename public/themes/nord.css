@@ -1,0 +1,47 @@
+/* nord 主题 */
+:root {
+    --typing-panel-bg-color: var(--home-window-bg-color);
+    --typing-panel-border-color: transparent;
+    --typing-text-color: var(--head-text-color);
+    --typing-correct-color: var(--primary-color);
+    --typing-error-color: var(--monkey-error-color);
+    --typing-error-bg-color: rgba(245, 34, 45, 0.14);
+    --typing-current-bg-color: var(--home-input-focus-color);
+    --typing-caret-color: var(--monkey-caret-color);
+    --typing-code-font: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+    --primary-color: #88c0d0;
+    --success-color: #a3be8c;
+    --error-color: #bf616a;
+    --bg-color: #2e3440;
+    --head-text-color: #eceff4;
+    --home-window-bg-color: rgba(46, 52, 64, 0.72);
+    --home-window-text-color: #eceff4;
+    --home-window-text-sub-color: rgba(216, 222, 233, 0.6);
+    --home-window-text-acting-bg-color: rgba(136, 192, 208, 0.2);
+    --home-input-focus-color: rgba(136, 192, 208, 0.16);
+    --home-countdown-bg-color: rgba(59, 66, 82, 0.9);
+    --home-countdown-text-color: #eceff4;
+    --home-reload-btn-bg-color: rgba(136, 192, 208, 0.7);
+    --home-reload-btn-focus-color: rgba(136, 192, 208, 0.2);
+    --home-reload-btn-text-color: #2e3440;
+    --word-count-checked-color: #88c0d0;
+    --monkey-caret-color: #88c0d0;
+    --monkey-sub-color: rgba(216, 222, 233, 0.55);
+    --monkey-error-color: #bf616a;
+}
+
+body {
+    --body-back-image: linear-gradient(160deg, #242933 0%, #2e3440 55%, #3b4252 100%);
+}
+
+.TypingArea__text {
+    border-color: rgba(136, 192, 208, 0.14);
+}
+
+.app-header {
+    background: rgba(46, 52, 64, 0.55) !important;
+    backdrop-filter: blur(14px) saturate(140%);
+    -webkit-backdrop-filter: blur(14px) saturate(140%);
+    border: 1px solid rgba(136, 192, 208, 0.12);
+    border-radius: 12px;
+}

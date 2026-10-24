@@ -1,0 +1,39 @@
+/* solarized light 主题 */
+:root {
+    --typing-panel-bg-color: var(--home-window-bg-color);
+    --typing-panel-border-color: transparent;
+    --typing-text-color: var(--head-text-color);
+    --typing-correct-color: var(--primary-color);
+    --typing-error-color: var(--monkey-error-color);
+    --typing-error-bg-color: rgba(245, 34, 45, 0.14);
+    --typing-current-bg-color: var(--home-input-focus-color);
+    --typing-caret-color: var(--monkey-caret-color);
+    --typing-code-font: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+    --primary-color: #268bd2;
+    --success-color: #859900;
+    --error-color: #dc322f;
+    --bg-color: #fdf6e3;
+    --head-text-color: #073642;
+    --home-window-bg-color: rgba(255, 255, 255, 0.82);
+    --home-window-text-color: #073642;
+    --home-window-text-sub-color: rgba(101, 123, 131, 0.8);
+    --home-window-text-acting-bg-color: rgba(38, 139, 210, 0.14);
+    --home-input-focus-color: rgba(38, 139, 210, 0.1);
+    --home-countdown-bg-color: rgba(238, 232, 213, 0.9);
+    --home-countdown-text-color: #073642;
+    --home-reload-btn-bg-color: rgba(38, 139, 210, 0.8);
+    --home-reload-btn-focus-color: rgba(38, 139, 210, 0.16);
+    --home-reload-btn-text-color: #fdf6e3;
+    --word-count-checked-color: #268bd2;
+    --monkey-caret-color: #268bd2;
+    --monkey-sub-color: rgba(101, 123, 131, 0.8);
+    --monkey-error-color: #dc322f;
+}
+
+body {
+    --body-back-image: linear-gradient(160deg, #eee8d5 0%, #fdf6e3 55%, #f5e9c8 100%);
+}
+
+.TypingArea__text {
+    border-color: rgba(38, 139, 210, 0.18);
+}

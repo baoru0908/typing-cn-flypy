@@ -1,8 +1,10 @@
 /*
- * 英文打字练习：从语料库随机取一句，交给通用打字引擎 TypingArea
+ * 英文打字练习：从语料库随机取一段，交给通用打字引擎 TypingArea
+ * 短句/段落/长文三档，可在同档内换一段
  */
-import React, { useState, useCallback } from 'react';
-import { Radio } from 'antd';
+import React, { useState, useCallback, useMemo } from 'react';
+import { Radio, Button } from 'antd';
+import { SwapOutlined } from '@ant-design/icons';
 
 import './English.less';
 import TypingArea from '@/components/typingArea/TypingArea';
@@ -11,9 +13,22 @@ import { englishSentences } from './sentences';
 const LEVELS = ['全部', 'short', 'medium', 'long'] as const;
 type Level = (typeof LEVELS)[number];
 
-const pickOne = (level: Level) => {
-    const pool =
-        level === '全部' ? englishSentences : englishSentences.filter((s) => s.level === level);
+const LEVEL_LABEL: Record<Level, string> = {
+    全部: '全部',
+    short: '短句',
+    medium: '段落',
+    long: '长文',
+};
+
+const poolOf = (level: Level) =>
+    level === '全部' ? englishSentences : englishSentences.filter((s) => s.level === level);
+
+const pickOne = (level: Level, exclude?: string) => {
+    let pool = poolOf(level);
+    if (pool.length > 1 && exclude) {
+        const rest = pool.filter((s) => s.text !== exclude);
+        if (rest.length) pool = rest;
+    }
     return pool[Math.floor(Math.random() * pool.length)].text;
 };
 
@@ -26,6 +41,12 @@ const English: React.FC = () => {
         setText(pickOne(lv));
     }, []);
 
+    const onNext = useCallback(() => {
+        setText((prev) => pickOne(level, prev));
+    }, [level]);
+
+    const count = useMemo(() => poolOf(level).length, [level]);
+
     return (
         <div className="English">
             <div className="word-count-radio">
@@ -36,18 +57,23 @@ const English: React.FC = () => {
                 >
                     {LEVELS.map((lv) => (
                         <Radio.Button tabIndex={-1} key={lv} value={lv}>
-                            {lv === 'short'
-                                ? '短句'
-                                : lv === 'medium'
-                                ? '中句'
-                                : lv === 'long'
-                                ? '长句'
-                                : '全部'}
+                            {LEVEL_LABEL[lv]}
                         </Radio.Button>
                     ))}
                 </Radio.Group>
+                <span className="english-next-line">
+                    <Button
+                        tabIndex={-1}
+                        size="small"
+                        type="link"
+                        icon={<SwapOutlined />}
+                        onClick={onNext}
+                    >
+                        换一段（{count}）
+                    </Button>
+                </span>
             </div>
-            <TypingArea text={text} />
+            <TypingArea text={text} variant="prose" />
         </div>
     );
 };

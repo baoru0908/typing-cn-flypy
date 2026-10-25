@@ -2,7 +2,7 @@
 
 中文全拼 / 小鹤双拼打字练习。四种模式、40 套主题、字体全部自托管，可打包成单个离线 HTML 文件。
 
-**在线体验 → https://baoru0908.github.io/typing-cn-flypy/** · [English](README.en.md)
+**在线体验 → https://baoru0908.github.io/typing-cn-flypy/** · [English](README.en.md) · [更新日志](CHANGELOG.md)
 
 ## 四种模式
 

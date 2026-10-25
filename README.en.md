@@ -2,7 +2,7 @@
 
 A Chinese typing trainer for full pinyin and Xiaohe double pinyin. Four modes, 40 themes, fully self-hosted fonts, and a single-file offline build.
 
-**Live demo → https://baoru0908.github.io/typing-cn-flypy/** · [中文](README.md)
+**Live demo → https://baoru0908.github.io/typing-cn-flypy/** · [中文](README.md) · [Changelog](CHANGELOG.md)
 
 ## Four modes
 

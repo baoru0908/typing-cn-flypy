@@ -1,7 +1,9 @@
 /* ==========================================================================
  * 字库（全部 SIL OFL 开源，可商用、可自托管）
  * --------------------------------------------------------------------------
- * Inter           界面 + 英文正文 —— 为屏幕设计的无衬线，x-height 大、字重层次清晰
+ * Inter           界面 —— 为屏幕设计的无衬线，x-height 大、字重层次清晰
+ * Roboto Mono     英文打字区 —— monkeytype 同款，等宽节奏稳、x-height 高，
+ *                  快速扫读时字母边界清晰；与 JetBrains Mono（代码模式）拉开观感
  * JetBrains Mono  代码 + 拼音编码 —— 等宽，字母骨架区分度高（l/I/1、0/O）
  * 霞鹜文楷         汉字 —— 楷体，笔锋带书写感，与「鹤键」的书卷气质一致
  *                  分片加载见 public/fonts/lxgw.css（97 个 unicode-range 分片，按需下载）
@@ -17,6 +19,17 @@
     font-weight: 100 900;
     font-display: swap;
     src: url('../assets/fonts/inter-variable-latin.woff2') format('woff2');
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC,
+        U+0304, U+0308, U+0329, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212,
+        U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+    font-family: 'Roboto Mono';
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url('../assets/fonts/roboto-mono-latin-400-normal.woff2') format('woff2');
     unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC,
         U+0304, U+0308, U+0329, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212,
         U+2215, U+FEFF, U+FFFD;

@@ -1,8 +1,9 @@
 /* ==========================================================================
  * 通用打字区
  * 排版变体：
- *   prose — 英文散文：22px / 行距 1.9 / 字距 -0.004em / 约 76 字符行宽
- *   code  — 代码：等宽 16px / 行距 1.8 / 保留缩进与空行 / 关闭连字
+ *   en    — 英文：等宽 Roboto Mono 20px / 行距 1.8 / 字距 0 / 约 63 字符行宽
+ *           （monkeytype 同款思路：等宽节奏稳，落点可预期）
+ *   code  — 代码：等宽 JetBrains Mono 16px / 行距 1.8 / 保留缩进与空行 / 关闭连字
  *   cn    — 中文：21px / 行距 1.9 / 加大字距，与拼音词块同一节奏
  * 颜色全部走语义令牌，40 套主题自动适配
  * ========================================================================== */
@@ -184,23 +185,20 @@
 }
 
 /* ==========================================================================
- * 变体：英文散文
+ * 变体：英文（等宽）
  * ========================================================================== */
 
 .TypingArea--prose {
     max-width: 100%;
 
     .TypingArea__text {
-        font-family: var(--ui-font-read);
-        font-size: var(--type-prose);
-        line-height: var(--type-prose-leading);
-        letter-spacing: var(--type-prose-tracking);
-        word-spacing: var(--type-prose-word-spacing);
-        font-feature-settings:
-            'kern' 1,
-            'liga' 1,
-            'calt' 1;
-        font-optical-sizing: auto;
+        font-family: var(--ui-font-type-en);
+        font-size: var(--type-en);
+        line-height: var(--type-en-leading);
+        letter-spacing: var(--type-en-tracking);
+        /* 关连字：等宽下保证一个字符占一个格子，逐字上色不错位 */
+        font-variant-ligatures: none;
+        font-feature-settings: 'liga' 0, 'calt' 0;
         word-break: normal;
         overflow-wrap: break-word;
         text-align: left;
@@ -254,7 +252,7 @@
     .TypingArea__text {
         font-family: var(--ui-font-hanzi);
         font-size: var(--type-hanzi);
-        line-height: var(--type-prose-leading);
+        line-height: var(--type-cn-leading);
         letter-spacing: var(--type-hanzi-tracking);
     }
 }

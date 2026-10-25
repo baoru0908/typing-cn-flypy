@@ -10,7 +10,7 @@
 
     &__head {
         font-size: 11px;
-        letter-spacing: 0.14em;
+        letter-spacing: var(--track-label);
         color: var(--ui-ghost);
         text-transform: uppercase;
         writing-mode: horizontal-tb;
@@ -30,8 +30,10 @@
 
     &__value {
         font-size: 34px;
-        font-weight: 650;
-        letter-spacing: -0.02em;
+        /* Inter 只有 400/500/600，600 已是最重一档；
+           写 650 会落入合成/模糊匹配，显式 600 保证拿到真字重 */
+        font-weight: 600;
+        letter-spacing: var(--track-num);
         color: var(--ui-text);
         font-variant-numeric: tabular-nums;
     }

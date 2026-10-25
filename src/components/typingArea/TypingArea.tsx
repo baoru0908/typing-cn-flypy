@@ -38,6 +38,15 @@ interface Props {
     expandTabs?: boolean;
     /** 排版变体，决定字体/字号/行距/换行策略 */
     variant?: TypingVariant;
+    /**
+     * 每个字符对应的期望按键串（与 text 逐字符对齐）。
+     * 不传 = 一键一字符（英文 / 代码的原有行为）。
+     * 传入则进入编码模式：汉字给拼音编码（全拼/双拼），
+     * 英文数字标点给自身，于是一个汉字要敲多个键。
+     */
+    codes?: string[];
+    /** 编码模式下是否在汉字下方显示拼音提示行 */
+    showPinyin?: boolean;
     /** 结果回调 */
     onResult?: (result: TypingResult) => void;
     /** 速度单位标签 */
@@ -52,6 +61,10 @@ const expandTabs = (text: string, width = TAB_WIDTH) => text.replace(/\t/g, ' '.
 const TypingArea: React.FC<Props> = (props) => {
     const { text, expandTabs: useExpandTabs = false, variant = 'prose', onResult } = props;
     const rawText = useExpandTabs ? expandTabs(text) : text;
+    // 编码模式：调用方给了逐字符的期望按键串才启用，否则维持一键一字符
+    const codes =
+        props.codes && props.codes.length === Array.from(rawText).length ? props.codes : null;
+    const showPinyin = !!codes && !!props.showPinyin;
 
     const inputEl = useRef(null);
     const textEl = useRef(null);
@@ -62,6 +75,8 @@ const TypingArea: React.FC<Props> = (props) => {
         Array.from(rawText).map((char) => ({ char, isCorrect: null }))
     );
     const [index, setIndex] = useState(0);
+    // 编码模式：当前单元已敲入的按键（一个汉字要敲多个键）
+    const [buffer, setBuffer] = useState('');
     const [isTyping, setIsTyping] = useState(false);
     const [isCaretFlash, setIsCaretFlash] = useState(false);
     const [showResult, setShowResult] = useState(false);
@@ -81,6 +96,7 @@ const TypingArea: React.FC<Props> = (props) => {
     useEffect(() => {
         setChars(Array.from(rawText).map((char) => ({ char, isCorrect: null })));
         setIndex(0);
+        setBuffer('');
         setShowResult(false);
         beginTimeRef.current = 0;
         settledRef.current = false;
@@ -149,6 +165,38 @@ const TypingArea: React.FC<Props> = (props) => {
             if (beginTimeRef.current === 0) {
                 beginTimeRef.current = Date.now();
             }
+            const target = chars[index];
+            if (!target) return;
+
+            if (codes) {
+                // 编码模式：期望按键串可能多键（汉字拼音）。
+                // 逐键累积，任何一键不符即整单元判错并清空重来，
+                // 与 Monkey 的打满判定口径一致，不出现「半对」的歧义。
+                const expect = codes[index];
+                const next = buffer + key;
+                if (expect.startsWith(next)) {
+                    if (next.length === expect.length) {
+                        const nextChars = chars.slice();
+                        nextChars[index] = { ...target, isCorrect: true };
+                        setChars(nextChars);
+                        setBuffer('');
+                        const nextIndex = index + 1;
+                        setIndex(nextIndex);
+                        if (nextIndex >= nextChars.length) settle(nextChars);
+                    } else {
+                        // 前缀正确，继续等后续按键
+                        setBuffer(next);
+                    }
+                } else {
+                    const nextChars = chars.slice();
+                    nextChars[index] = { ...target, isCorrect: false };
+                    setChars(nextChars);
+                    setBuffer('');
+                    // 判错不前进：用户重打这一单元
+                }
+                return;
+            }
+
             const nextChars = chars.slice();
             nextChars[index] = { ...nextChars[index], isCorrect: key === nextChars[index].char };
             setChars(nextChars);
@@ -158,10 +206,16 @@ const TypingArea: React.FC<Props> = (props) => {
                 settle(nextChars);
             }
         },
-        [chars, index, showResult, settle]
+        [chars, index, showResult, settle, codes, buffer]
     );
 
     const backspace = useCallback(() => {
+        // 编码模式：当前单元已敲了部分按键时，退格只回退缓冲，
+        // 不退回上一个单元——避免「敲错一个键就丢掉整个字」的挫败感
+        if (codes && buffer) {
+            setBuffer((b) => b.slice(0, -1));
+            return;
+        }
         if (index <= 0) return;
         setChars((prev) => {
             const next = prev.slice();
@@ -169,7 +223,9 @@ const TypingArea: React.FC<Props> = (props) => {
             return next;
         });
         setIndex((i) => i - 1);
-    }, [index]);
+        // 回到上一个单元时，若该单元是多键编码，预填已敲内容
+        // （此时它尚未判定，缓冲为空，无需处理）
+    }, [index, codes, buffer]);
 
     const onKeyDown = (evt: React.KeyboardEvent) => {
         // Tab 保留给浏览器（切焦点），其余按键一律接管
@@ -197,6 +253,7 @@ const TypingArea: React.FC<Props> = (props) => {
     const reload = useCallback(() => {
         setChars(Array.from(rawText).map((char) => ({ char, isCorrect: null })));
         setIndex(0);
+        setBuffer('');
         setShowResult(false);
         beginTimeRef.current = 0;
         settledRef.current = false;
@@ -261,7 +318,7 @@ const TypingArea: React.FC<Props> = (props) => {
                         height: `${caretPos.height * 0.82}px`,
                     }}
                 />
-                <div className="TypingArea__text" ref={textEl}>
+                <div className={`TypingArea__text ${showPinyin ? 'is-coded' : ''}`} ref={textEl}>
                     {chars.map((c, i) => {
                         const isSpace = c.char === ' ' || c.char === '\n' || c.char === '\t';
                         let cls = 'char ';
@@ -271,6 +328,7 @@ const TypingArea: React.FC<Props> = (props) => {
                         if (i === index && !showResult) cls += ' current';
                         // 空格在错误时用背景块提示，避免看不见
                         if (c.isCorrect === false && isSpace) cls += ' char-space-wrong';
+
                         // 换行符渲染为可见换行：代码模式保留空行与缩进
                         if (c.char === '\n') {
                             return (
@@ -279,6 +337,20 @@ const TypingArea: React.FC<Props> = (props) => {
                                 </span>
                             );
                         }
+
+                        // 编码模式 + 拼音提示：汉字下方挂一行编码，
+                        // 已敲的部分高亮，让用户知道进度与目标
+                        if (showPinyin && codes && codes[i] && codes[i] !== c.char) {
+                            const typed = i === index ? buffer : '';
+                            return (
+                                <span className={`${cls} char--coded`} key={i}>
+                                    <i className="char__hint">{codes[i]}</i>
+                                    <i className="char__glyph">{isSpace ? ' ' : c.char}</i>
+                                    {typed && <i className="char__typed">{typed}</i>}
+                                </span>
+                            );
+                        }
+
                         return (
                             <span className={cls} key={i}>
                                 {isSpace ? ' ' : c.char}
@@ -295,6 +367,8 @@ const TypingArea: React.FC<Props> = (props) => {
                 <span className="TypingArea__tip">
                     {variant === 'code'
                         ? 'Enter 换行 · Tab 已禁用，制表符按 4 空格判定'
+                        : showPinyin
+                        ? '汉字按提示编码输入 · 退格可改 · 打错重打本字'
                         : '支持退格修正 · 打错不影响继续'}
                 </span>
                 <ReloadBtn onClick={reload} />

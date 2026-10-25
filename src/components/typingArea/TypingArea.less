@@ -58,14 +58,10 @@
         background: var(--ui-surface);
         border: 1px solid var(--ui-line);
         border-radius: var(--ui-radius-lg);
-        box-shadow:
-            0 1px 0 rgba(255, 255, 255, 0.04) inset,
-            0 34px 70px -50px rgba(0, 0, 0, 0.6);
+        box-shadow: 0 1px 0 rgba(255, 255, 255, 0.04) inset, 0 34px 70px -50px rgba(0, 0, 0, 0.6);
         cursor: text;
         overflow: hidden;
-        transition:
-            border-color 0.25s var(--ease-out),
-            background-color 0.3s var(--ease-in-out);
+        transition: border-color 0.25s var(--ease-out), background-color 0.3s var(--ease-in-out);
 
         &.is-live {
             border-color: var(--ui-accent-line);
@@ -89,9 +85,7 @@
         width: 2px;
         border-radius: 2px;
         background: var(--ui-accent);
-        box-shadow:
-            0 0 6px var(--ui-accent),
-            0 0 16px var(--ui-accent);
+        box-shadow: 0 0 6px var(--ui-accent), 0 0 16px var(--ui-accent);
         pointer-events: none;
         transition: transform 90ms var(--ease-out);
 
@@ -184,6 +178,73 @@
     background: var(--ui-error-soft);
 }
 
+/* ---------- 编码模式（自定义文本转拼音）----------
+ * 汉字上方挂一行提示编码，已敲部分单独高亮。
+ * 结构：.char--coded { .char__hint .char__glyph .char__typed }
+ * 提示行用绝对定位钉在汉字上方、不占布局：否则 flex 双行会把每个汉字
+ * 撑高，行距散掉，光标与换行位置也和纯文本模式不一致。 */
+.TypingArea__text .char--coded {
+    position: relative;
+    display: inline-block;
+    min-width: 1em;
+    /* 给上方提示行留空间，避免与上一行重叠 */
+    margin-top: 0.7em;
+    vertical-align: bottom;
+
+    .char__hint {
+        position: absolute;
+        left: 50%;
+        bottom: 100%;
+        transform: translateX(-50%);
+        margin-bottom: 1px;
+        font-family: var(--ui-font-mono);
+        font-size: 0.42em;
+        line-height: 1;
+        letter-spacing: 0.02em;
+        white-space: nowrap;
+        color: var(--ui-ghost);
+        font-style: normal;
+        pointer-events: none;
+        transition: color 0.15s var(--ease-out);
+    }
+
+    .char__glyph {
+        display: block;
+        font-style: normal;
+        line-height: 1.25;
+    }
+
+    /* 已敲入的按键：紧跟提示行右侧，用主色标出进度 */
+    .char__typed {
+        position: absolute;
+        left: 100%;
+        bottom: 100%;
+        margin-left: 1px;
+        margin-bottom: 1px;
+        font-family: var(--ui-font-mono);
+        font-size: 0.42em;
+        line-height: 1;
+        color: var(--ui-accent);
+        font-style: normal;
+        pointer-events: none;
+    }
+
+    /* 当前字的提示行提亮，与 .char.current 的下划线配合 */
+    &.current .char__hint {
+        color: var(--ui-accent);
+    }
+
+    &.correct .char__hint {
+        color: var(--ui-correct);
+        opacity: 0.75;
+    }
+
+    &.wrong .char__hint {
+        color: var(--ui-error);
+        opacity: 0.85;
+    }
+}
+
 /* ==========================================================================
  * 变体：英文（等宽）
  * ========================================================================== */
@@ -254,6 +315,13 @@
         font-size: var(--type-hanzi);
         line-height: var(--type-cn-leading);
         letter-spacing: var(--type-hanzi-tracking);
+    }
+
+    /* 编码模式：每个汉字上方挂了提示行，行距必须放开，
+       否则相邻两行的提示行会和上一行汉字挤在一起。
+       用 class 而不是 :has() —— 项目带 legacy 兼容，:has() 在老浏览器不生效 */
+    .TypingArea__text.is-coded {
+        line-height: calc(var(--type-cn-leading) * 1.5);
     }
 }
 

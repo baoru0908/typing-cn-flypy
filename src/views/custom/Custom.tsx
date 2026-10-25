@@ -3,6 +3,8 @@
  * - 输入即生效（800ms 防抖，打字区与编辑器焦点互斥，不会打断练习）
  * - 可把常用文本保存成多段随时切换（存 localStorage）
  * - 中文占比高的文本自动切到中文排版变体（更大的字距与行距）
+ * - 中文可按「全拼 / 小鹤双拼」转成编码来打，中英混排天然支持：
+ *   汉字转拼音编码，英文数字标点原样，同一段文本里中西文都能练
  */
 import React, { useState, useCallback, useEffect, useMemo, useRef } from 'react';
 import { Input, Dropdown, Menu, message } from 'antd';
@@ -11,6 +13,7 @@ import { DeleteOutlined, DownOutlined, SaveOutlined, ClearOutlined } from '@ant-
 import './Custom.less';
 import TypingArea, { TypingVariant } from '@/components/typingArea/TypingArea';
 import storage from '@/utils/storage';
+import { buildTypingUnits, hanziRatio } from '@/utils/mixedCode';
 
 const STORAGE_KEY = 'CUSTOM_TYPE_TEXT';
 const LIST_KEY = 'CUSTOM_TYPE_LIST';
@@ -20,6 +23,9 @@ const LIST_LIMIT = 10;
 const APPLY_DELAY = 800;
 
 const DEFAULT_TEXT = '在此输入想要练习的文本，支持中英文与换行。';
+
+/** 输入方案持久化 key，与 Monkey 的设置项同名同值域（'1' 全拼 / '2' 小鹤双拼） */
+const INPUT_MODE_KEY = 'CUSTOM_TYPE_INPUT_MODE';
 
 interface SavedText {
     id: string;
@@ -45,6 +51,10 @@ const Custom: React.FC = () => {
     );
     const [editing, setEditing] = useState(text);
     const [list, setList] = useState<SavedText[]>(loadList);
+    // 中文输入方案：'1' 全拼 / '2' 小鹤双拼，与 Monkey 的设置项保持一致
+    const [inputMode, setInputMode] = useState<string>(
+        () => storage.local.get<string>(INPUT_MODE_KEY) || '2'
+    );
 
     const timerRef = useRef(0);
     const areaRef = useRef<any>(null);
@@ -57,22 +67,19 @@ const Custom: React.FC = () => {
     );
 
     /** 输入即生效：防抖后同步到打字区与本地存储。空文本不生效，避免打字区空转 */
-    const onEditingChange = useCallback(
-        (val: string) => {
-            setEditing(val);
-            window.clearTimeout(timerRef.current);
-            timerRef.current = window.setTimeout(() => {
-                const next = val.trim();
-                if (!next) return;
-                setText((prev) => {
-                    if (prev === next) return prev;
-                    storage.local.set(STORAGE_KEY, next);
-                    return next;
-                });
-            }, APPLY_DELAY);
-        },
-        []
-    );
+    const onEditingChange = useCallback((val: string) => {
+        setEditing(val);
+        window.clearTimeout(timerRef.current);
+        timerRef.current = window.setTimeout(() => {
+            const next = val.trim();
+            if (!next) return;
+            setText((prev) => {
+                if (prev === next) return prev;
+                storage.local.set(STORAGE_KEY, next);
+                return next;
+            });
+        }, APPLY_DELAY);
+    }, []);
 
     const saveToLibrary = useCallback(() => {
         const content = editing.trim();
@@ -97,16 +104,13 @@ const Custom: React.FC = () => {
         storage.local.set(STORAGE_KEY, item.text);
     }, []);
 
-    const removeFrom = useCallback(
-        (id: string) => {
-            setList((prev) => {
-                const next = prev.filter((it) => it.id !== id);
-                saveList(next);
-                return next;
-            });
-        },
-        []
-    );
+    const removeFrom = useCallback((id: string) => {
+        setList((prev) => {
+            const next = prev.filter((it) => it.id !== id);
+            saveList(next);
+            return next;
+        });
+    }, []);
 
     /** 清空 = 编辑器与打字区一起清（显式操作，不受「空文本不生效」守卫拦截） */
     const clearEditing = useCallback(() => {
@@ -117,18 +121,25 @@ const Custom: React.FC = () => {
         areaRef.current?.focus();
     }, []);
 
-    // 中文为主的文本用中文排版（字距 0.02em、行距 1.9）
-    const { variant, charCount } = useMemo<{
+    // 排版与编码：中文为主走中文排版；含汉字时把汉字转成拼音编码来打
+    // （英文数字标点原样，所以中英混排也能练）。
+    // 纯英文/纯标点不走编码，保持原有的一键一字符行为。
+    const { variant, charCount, codes, coded } = useMemo<{
         variant: TypingVariant;
         charCount: number;
+        codes: string[] | null;
+        coded: boolean;
     }>(() => {
-        const cjk = (text.match(/[\u4e00-\u9fa5]/g) || []).length;
-        const total = text.replace(/\s/g, '').length;
+        const ratio = hanziRatio(text);
+        const total = Array.from(text).filter((c) => !/\s/.test(c)).length;
+        const units = ratio > 0 ? buildTypingUnits(text, inputMode) : null;
         return {
-            variant: total && cjk / total > 0.5 ? 'cn' : 'prose',
+            variant: ratio > 0.5 ? 'cn' : 'prose',
             charCount: total,
+            codes: units ? units.map((u) => u.code) : null,
+            coded: !!units,
         };
-    }, [text]);
+    }, [text, inputMode]);
 
     const libraryMenu = (
         <Menu
@@ -166,9 +177,35 @@ const Custom: React.FC = () => {
                         <span className="chips__label">练习文本</span>
                         <span className="chips__meta">
                             {charCount} 字 · {variant === 'cn' ? '中文排版' : '英文排版'}
+                            {coded ? ` · ${inputMode === '2' ? '双拼' : '全拼'}编码` : ''}
                         </span>
                     </div>
                     <div className="Custom__actions">
+                        {/* 中文输入方案：与 Monkey 的设置项同值域，切换即时生效 */}
+                        <div className="seg seg--sm" role="group" aria-label="中文输入方案">
+                            <button
+                                type="button"
+                                tabIndex={-1}
+                                className={inputMode === '1' ? 'is-active' : ''}
+                                onClick={() => {
+                                    setInputMode('1');
+                                    storage.local.set(INPUT_MODE_KEY, '1');
+                                }}
+                            >
+                                全拼
+                            </button>
+                            <button
+                                type="button"
+                                tabIndex={-1}
+                                className={inputMode === '2' ? 'is-active' : ''}
+                                onClick={() => {
+                                    setInputMode('2');
+                                    storage.local.set(INPUT_MODE_KEY, '2');
+                                }}
+                            >
+                                双拼
+                            </button>
+                        </div>
                         <button
                             type="button"
                             tabIndex={-1}
@@ -216,7 +253,12 @@ const Custom: React.FC = () => {
                     </div>
                 </div>
                 {text ? (
-                    <TypingArea text={text} variant={variant} />
+                    <TypingArea
+                        text={text}
+                        variant={variant}
+                        codes={codes || undefined}
+                        showPinyin={coded}
+                    />
                 ) : (
                     <div className="Custom__empty">在上面输入或从「我的文本」里选一段开始</div>
                 )}

@@ -1,5 +1,16 @@
 /* 自定义模式：编辑器与打字面板共用同一容器宽度 */
 .Custom {
+    &__actions {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    &__caret-down {
+        font-size: 10px;
+        opacity: 0.7;
+    }
+
     &__editor {
         margin-bottom: 20px;
         animation: editorIn 0.2s var(--ease-out);
@@ -10,6 +21,95 @@
             line-height: 1.9 !important;
         }
     }
+
+    /* 编辑器底行：生效提示 + 清空 */
+    &__editor-foot {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-top: 6px;
+        font-size: 11px;
+        letter-spacing: 0.02em;
+        color: var(--ui-ghost);
+
+        @media (max-width: 768px) {
+            margin-top: 4px;
+        }
+    }
+
+    &__clear {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        border: 0;
+        background: transparent;
+        padding: 2px 4px;
+        border-radius: 5px;
+        font-size: 11px;
+        color: var(--ui-ghost);
+        cursor: pointer;
+        transition: color 0.15s var(--ease-out);
+
+        &:hover {
+            color: var(--ui-dim);
+        }
+    }
+
+    /* 空态：没有可练文本时替掉打字面板 */
+    &__empty {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 160px;
+        border: 1px dashed var(--ui-line);
+        border-radius: 10px;
+        font-size: 13px;
+        color: var(--ui-ghost);
+    }
+
+    /* 我的文本下拉 */
+    &__menu {
+        .ant-dropdown-menu-item {
+            display: flex;
+            align-items: center;
+            max-width: 260px;
+        }
+    }
+
+    &__menu-name {
+        flex: 1 1 auto;
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    &__menu-del {
+        flex: 0 0 auto;
+        padding: 2px 4px;
+        margin-left: 8px;
+        border-radius: 4px;
+        font-size: 11px;
+        color: var(--ui-ghost);
+        opacity: 0;
+        transition: all 0.15s var(--ease-out);
+
+        &:hover {
+            color: var(--ui-error);
+            background: var(--ui-error-soft, rgba(245, 34, 45, 0.1));
+        }
+    }
+
+    .ant-dropdown-menu-item:hover &__menu-del {
+        opacity: 1;
+    }
+}
+
+/* 工具栏统计：字数与排版变体 */
+.chips__meta {
+    font-size: 12px;
+    color: var(--ui-dim);
+    white-space: nowrap;
 }
 
 @keyframes editorIn {
@@ -26,5 +126,10 @@
 @media (max-width: 768px) {
     .Custom__editor {
         margin-bottom: 14px;
+    }
+
+    /* 手机上删掉「存为常用」的文字，只留图标，两个按钮才放得下 */
+    .Custom__actions .ghost-btn:first-child {
+        padding: 0 9px;
     }
 }

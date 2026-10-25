@@ -58,6 +58,19 @@ const TAB_WIDTH = 4;
 /** 把制表符展开成空格 */
 const expandTabs = (text: string, width = TAB_WIDTH) => text.replace(/\t/g, ' '.repeat(width));
 
+/**
+ * 编码提示行的显示内容。
+ * 汉字/字母直接显示编码；空格与换行显示按键符号 —— 这两个单元的
+ * code 就是字符本身（' ' / '\n'），原样显示等于什么都不显示，
+ * 用户看不出这里需要敲键，也就无从对照。
+ */
+function hintOf(char: string, code: string): { text: string; isKey: boolean } {
+    if (char === ' ') return { text: '␣', isKey: true };
+    if (char === '\n') return { text: '↵', isKey: true };
+    if (char === '\t') return { text: '⇥', isKey: true };
+    return { text: code, isKey: false };
+}
+
 const TypingArea: React.FC<Props> = (props) => {
     const { text, expandTabs: useExpandTabs = false, variant = 'prose', onResult } = props;
     const rawText = useExpandTabs ? expandTabs(text) : text;
@@ -329,24 +342,45 @@ const TypingArea: React.FC<Props> = (props) => {
                         // 空格在错误时用背景块提示，避免看不见
                         if (c.isCorrect === false && isSpace) cls += ' char-space-wrong';
 
+                        // 编码模式：每个单元上方都挂提示。
+                        // 汉字给拼音编码；空格/换行给按键符号 —— 这些单元
+                        // code === char，此前被 codes[i] !== c.char 排除在提示
+                        // 之外，用户看不出「这里要敲空格/回车」，打错也没有目标可对照。
+                        // 换行单元也走这里：↵ 提示挂在换行处，仍渲染真实换行。
+                        if (showPinyin && codes && codes[i]) {
+                            const typed = i === index ? buffer : '';
+                            const hint = hintOf(c.char, codes[i]);
+                            // 全拼编码最长 6 字母（zhuang/chuang），居中显示会向两侧
+                            // 各溢出约半个编码宽，与相邻单元的提示行重叠。
+                            // 长编码单元向右撑出空间，提示改为左对齐，向空白处延伸。
+                            const wide = hint.text.length >= 4;
+                            return (
+                                <span
+                                    className={`${cls} char--coded ${
+                                        hint.isKey ? 'char--key' : ''
+                                    } ${wide ? 'char--wide' : ''}`}
+                                    key={i}
+                                >
+                                    <i className={`char__hint ${hint.isKey ? 'is-key' : ''}`}>
+                                        {hint.text}
+                                    </i>
+                                    <i
+                                        className={`char__glyph ${
+                                            isSpace && c.char !== '\n' ? 'blank' : ''
+                                        }`}
+                                    >
+                                        {c.char === '\n' ? '\n' : isSpace ? ' ' : c.char}
+                                    </i>
+                                    {typed && <i className="char__typed">{typed}</i>}
+                                </span>
+                            );
+                        }
+
                         // 换行符渲染为可见换行：代码模式保留空行与缩进
                         if (c.char === '\n') {
                             return (
                                 <span className={cls} key={i}>
                                     {'\n'}
-                                </span>
-                            );
-                        }
-
-                        // 编码模式 + 拼音提示：汉字下方挂一行编码，
-                        // 已敲的部分高亮，让用户知道进度与目标
-                        if (showPinyin && codes && codes[i] && codes[i] !== c.char) {
-                            const typed = i === index ? buffer : '';
-                            return (
-                                <span className={`${cls} char--coded`} key={i}>
-                                    <i className="char__hint">{codes[i]}</i>
-                                    <i className="char__glyph">{isSpace ? ' ' : c.char}</i>
-                                    {typed && <i className="char__typed">{typed}</i>}
                                 </span>
                             );
                         }

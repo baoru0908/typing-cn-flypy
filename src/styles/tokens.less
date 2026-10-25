@@ -91,6 +91,11 @@
     --type-code-letter: 13px;
     --type-code-letter-tracking: 0em;
 
+    /* 编码提示行（自定义模式汉字上方的拼音/按键提示）。
+       固定 px 而不是 em：编码是要读的信息，跟着 20px 汉字等比缩到 8.4px
+       会看不清，全拼 5 字母尤其明显。三档字号各配一值。 */
+    --type-hint: 12px;
+
     --track-ui: -0.004em;
     --track-label: 0.12em;
     --track-num: -0.012em;
@@ -135,12 +140,14 @@ html[data-scale='m'] {
     --type-code: 17.5px;
     --type-hanzi: 22px;
     --type-code-letter: 14px;
+    --type-hint: 13px;
 }
 html[data-scale='l'] {
     --type-en: 24px;
     --type-code: 19px;
     --type-hanzi: 24px;
     --type-code-letter: 15px;
+    --type-hint: 14px;
 }
 
 /* ---- 汉字字族（由「设置 → 汉字」写入 <html data-hanzi>）----

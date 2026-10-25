@@ -182,13 +182,16 @@
  * 汉字上方挂一行提示编码，已敲部分单独高亮。
  * 结构：.char--coded { .char__hint .char__glyph .char__typed }
  * 提示行用绝对定位钉在汉字上方、不占布局：否则 flex 双行会把每个汉字
- * 撑高，行距散掉，光标与换行位置也和纯文本模式不一致。 */
+ * 撑高，行距散掉，光标与换行位置也和纯文本模式不一致。
+ *
+ * 字号不能跟着 em 缩放：0.42em 在 20px 汉字下只有 8.4px，全拼编码
+ * （zhong 5 个字母）根本看不清。改用固定 px，并给三档字号各配一值。 */
 .TypingArea__text .char--coded {
     position: relative;
     display: inline-block;
     min-width: 1em;
     /* 给上方提示行留空间，避免与上一行重叠 */
-    margin-top: 0.7em;
+    margin-top: 0.85em;
     vertical-align: bottom;
 
     .char__hint {
@@ -196,13 +199,14 @@
         left: 50%;
         bottom: 100%;
         transform: translateX(-50%);
-        margin-bottom: 1px;
+        margin-bottom: 2px;
         font-family: var(--ui-font-mono);
-        font-size: 0.42em;
+        /* 固定 px：编码是可读信息，不能随汉字字号等比缩小 */
+        font-size: var(--type-hint);
         line-height: 1;
         letter-spacing: 0.02em;
         white-space: nowrap;
-        color: var(--ui-ghost);
+        color: var(--ui-dim);
         font-style: normal;
         pointer-events: none;
         transition: color 0.15s var(--ease-out);
@@ -219,14 +223,43 @@
         position: absolute;
         left: 100%;
         bottom: 100%;
-        margin-left: 1px;
-        margin-bottom: 1px;
+        margin-left: 2px;
+        margin-bottom: 2px;
         font-family: var(--ui-font-mono);
-        font-size: 0.42em;
+        font-size: var(--type-hint);
         line-height: 1;
         color: var(--ui-accent);
         font-style: normal;
         pointer-events: none;
+    }
+
+    /* 空格 / 换行的提示用符号而不是空白，否则用户不知道这里要敲什么 */
+    .char__hint.is-key {
+        font-family: var(--ui-font-ui);
+        font-size: calc(var(--type-hint) + 1px);
+        letter-spacing: 0;
+        opacity: 0.75;
+    }
+
+    /* 长编码（全拼 4 字母以上）：向右撑出空间，提示左对齐向空白延伸，
+       否则居中显示会向两侧溢出，与相邻单元的提示行叠在一起 */
+    &.char--wide {
+        margin-right: 2.2em;
+
+        .char__hint {
+            left: 0;
+            transform: none;
+        }
+    }
+
+    /* 按键符号单元（空格/回车）：字形区是空白或换行，用底点标出位置，
+       否则空格打错时和「没有这个单元」分不清。
+       只对真正的空白生效 —— 全角标点（，。）本身就是实心字形，加底点会花 */
+    &.char--key .char__glyph:empty,
+    &.char--key .char__glyph.blank {
+        min-width: 0.4em;
+        min-height: 1px;
+        border-bottom: 1px dotted var(--ui-line-strong);
     }
 
     /* 当前字的提示行提亮，与 .char.current 的下划线配合 */
@@ -236,12 +269,12 @@
 
     &.correct .char__hint {
         color: var(--ui-correct);
-        opacity: 0.75;
+        opacity: 0.8;
     }
 
     &.wrong .char__hint {
         color: var(--ui-error);
-        opacity: 0.85;
+        opacity: 0.9;
     }
 }
 

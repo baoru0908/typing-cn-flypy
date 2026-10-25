@@ -79,6 +79,13 @@ const BrandMark = () => (
 const Header: React.FC<MapState & MapDispatch> = (props) => {
     const [settingModalVisible, setSettingModalVisible] = useState(false);
     const [themeModalVisible, setThemeModalVisible] = useState(false);
+    // 支持 ?panel=theme / ?panel=settings 深链：打开链接即展开对应面板，
+    // 便于回归测试固定打开某个面板，也方便把「主题面板」直接分享给别人
+    const [panelFromUrl] = useState<'theme' | 'settings' | null>(() => {
+        if (typeof window === 'undefined') return null;
+        const p = new URLSearchParams(window.location.search).get('panel');
+        return p === 'theme' || p === 'settings' ? p : null;
+    });
     const [wordsMode, setWordsMode] = useState(props.$state.root.wordsMode);
     const defaultWordsRef = useRef(defaultWordStr);
     const [words, setWords] = useState(
@@ -254,7 +261,7 @@ const Header: React.FC<MapState & MapDispatch> = (props) => {
             <Modal
                 className="ui-modal settings-modal"
                 title={null}
-                visible={settingModalVisible}
+                visible={settingModalVisible || panelFromUrl === 'settings'}
                 footer={null}
                 width={640}
                 onCancel={() => setSettingModalVisible(false)}
@@ -377,7 +384,7 @@ const Header: React.FC<MapState & MapDispatch> = (props) => {
             <Modal
                 className="ui-modal theme-modal"
                 title={null}
-                visible={themeModalVisible}
+                visible={themeModalVisible || panelFromUrl === 'theme'}
                 footer={null}
                 width={760}
                 onCancel={() => setThemeModalVisible(false)}
@@ -414,32 +421,46 @@ const Header: React.FC<MapState & MapDispatch> = (props) => {
                                             style={{ background: panel }}
                                         >
                                             <span className="theme-card__preview">
-                                                {/* 一行打字预览：打对 / 当前字 / 打错，与真实界面同一套色 */}
+                                                {/* 一行打字预览：打对 / 当前字 / 打错，
+                                                    用该主题真实的三色，比抽象色条更能
+                                                    反映这套主题实际练起来的样子。
+                                                    字符必须各自包在 <i> 里：
+                                                    裸文本 + 换行会被 JSX 渲染成空格，
+                                                    把四个字拉开成「打 一 字 练」。 */}
                                                 <span className="theme-card__row">
                                                     <i
                                                         className="theme-card__ch is-correct"
                                                         style={{ color: primary }}
-                                                    />
-                                                    打
+                                                    >
+                                                        打
+                                                    </i>
                                                     <i
                                                         className="theme-card__ch is-current"
                                                         style={{
                                                             color: text,
                                                             background: current,
                                                         }}
-                                                    />
-                                                    字
+                                                    >
+                                                        一
+                                                    </i>
                                                     <i
                                                         className="theme-card__ch is-error"
                                                         style={{ color: error }}
+                                                    >
+                                                        字
+                                                    </i>
+                                                    <i
+                                                        className="theme-card__ch"
+                                                        style={{ color: text }}
+                                                    >
+                                                        练
+                                                    </i>
+                                                    {/* 光标：与真实界面同色同形的竖线 */}
+                                                    <i
+                                                        className="theme-card__caret"
+                                                        style={{ background: p?.caret || primary }}
                                                     />
-                                                    练
                                                 </span>
-                                                {/* 光标：真实界面里那条闪烁的线 */}
-                                                <i
-                                                    className="theme-card__caret"
-                                                    style={{ background: p?.caret || primary }}
-                                                />
                                             </span>
                                             <span
                                                 className="theme-card__name"

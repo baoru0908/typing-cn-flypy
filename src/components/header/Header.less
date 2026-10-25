@@ -441,27 +441,24 @@
     }
 
     /* 打字行预览：直接摆四个汉字，用该主题真实的「打对/当前字/打错」三色，
-       比抽象色条更能反映这套主题实际练起来的样子 */
+       比抽象色条更能反映这套主题实际练起来的样子。
+       字符各自包在 <i> 里，所以这里不能加 gap —— 一加就会把字拉开。 */
     &__row {
         display: flex;
         align-items: center;
-        gap: 1px;
         height: 26px;
-        padding: 0 2px;
+        padding: 0 3px;
         border-radius: 6px;
-        /* 底色由 JS 用 --home-window-bg-color 注入到卡片上 */
-        font-size: 16px;
+        font-size: 15px;
         line-height: 1;
-        letter-spacing: 0.02em;
-        opacity: 0.92;
+        letter-spacing: 0;
+        opacity: 0.94;
     }
 
-    /* 当前字：底色由 JS 注入，这里只补圆角让高亮块成形 */
     &__ch {
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        min-width: 1em;
         font-style: normal;
 
         &.is-current {
@@ -470,14 +467,14 @@
         }
     }
 
-    /* 光标：与真实界面同色同形的竖线 */
+    /* 光标：与真实界面同色同形的竖线，紧跟最后一个字 */
     &__caret {
-        display: block;
+        display: inline-block;
         width: 2px;
         height: 11px;
-        margin-left: 2px;
+        margin-left: 1px;
         border-radius: 1px;
-        opacity: 0.85;
+        opacity: 0.9;
     }
 
     &__name {

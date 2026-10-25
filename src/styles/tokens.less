@@ -64,7 +64,9 @@
 
     /* ---- 打字排版：字号 / 行距 / 字距的唯一出处 ----
      * 字距按字体的光学特性分别设定，不能一套值套所有字体：
-     *   Inter 22px 视觉偏松 → 负字距 -0.011em
+     *   Inter 换用可变字体（opsz 14-32）后，font-optical-sizing: auto 生效，
+     *   字号越大字体自己收得越紧，手动字距只需恒定的小幅补偿 -0.004em，
+     *   不再需要按字号档位递增负字距（那是给 Inter 3 静态字重打的补丁）
      *   思源黑体按固定字身框设计，边距已内置 → 0，再加字距会「散架」
      *   楷体笔画细、字面窄 → 正字距 +0.04em 才透气（见 data-hanzi='kai'）
      *   等宽字体本身有节奏 → 0，靠固定字宽对齐
@@ -72,7 +74,7 @@
      */
     --type-prose: 22px;
     --type-prose-leading: 1.9;
-    --type-prose-tracking: -0.011em;
+    --type-prose-tracking: -0.004em;
     --type-prose-word-spacing: 0.01em;
 
     --type-code: 16px;
@@ -90,7 +92,7 @@
 
     --track-ui: -0.004em;
     --track-label: 0.12em;
-    --track-num: -0.02em;
+    --track-num: -0.012em;
 
     /* ---- 动效 ---- */
     --ease-out: cubic-bezier(0.2, 0.8, 0.3, 1);
@@ -125,21 +127,19 @@
     }
 }
 
-/* ---- 字号档位（由「设置 → 字号」写入 <html data-scale>）---- */
+/* ---- 字号档位（由「设置 → 字号」写入 <html data-scale>）----
+ * Inter 的 opsz 轴随字号自动收紧，档位只管字号本身，不再叠手动字距 */
 html[data-scale='m'] {
     --type-prose: 24px;
     --type-code: 17.5px;
     --type-hanzi: 22px;
     --type-code-letter: 14px;
-    /* 字号变大，Inter 需要更多负字距才能保持相同的视觉密度 */
-    --type-prose-tracking: -0.014em;
 }
 html[data-scale='l'] {
     --type-prose: 26px;
     --type-code: 19px;
     --type-hanzi: 24px;
     --type-code-letter: 15px;
-    --type-prose-tracking: -0.017em;
 }
 
 /* ---- 汉字字族（由「设置 → 汉字」写入 <html data-hanzi>）----

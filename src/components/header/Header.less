@@ -413,15 +413,16 @@
 
 .theme-card {
     display: block;
-    padding: 13px 12px 11px;
+    padding: 10px 10px 9px;
     border: 1px solid var(--ui-line);
-    border-radius: 10px;
+    border-radius: 12px;
     cursor: pointer;
     text-align: left;
     overflow: hidden;
     transition:
         transform 0.18s var(--ease-out),
-        box-shadow 0.18s var(--ease-out);
+        box-shadow 0.18s var(--ease-out),
+        border-color 0.18s var(--ease-out);
 
     &:hover {
         transform: translateY(-2px);
@@ -429,30 +430,32 @@
     }
 
     &.is-active {
+        border-color: var(--ui-accent);
         outline: 2px solid var(--ui-accent);
         outline-offset: 2px;
     }
 
+    /* 面板条：半透明面板色叠在卡片的页面底色上，
+       还原真实页面「底色 → 面板」的层叠观感 */
     &__preview {
         display: flex;
-        flex-direction: column;
-        gap: 6px;
-        margin-bottom: 12px;
+        align-items: center;
+        height: 42px;
+        border-radius: 8px;
+        margin-bottom: 9px;
     }
 
-    /* 打字行预览：直接摆四个汉字，用该主题真实的「打对/当前字/打错」三色，
-       比抽象色条更能反映这套主题实际练起来的样子。
+    /* 打字行预览：打对 / 当前字 / 打错三色 + 光标。
        字符各自包在 <i> 里，所以这里不能加 gap —— 一加就会把字拉开。 */
     &__row {
         display: flex;
         align-items: center;
-        height: 26px;
-        padding: 0 3px;
-        border-radius: 6px;
-        font-size: 15px;
+        height: 34px;
+        padding: 0 10px;
+        font-size: 17px;
         line-height: 1;
         letter-spacing: 0;
-        opacity: 0.94;
+        opacity: 0.96;
     }
 
     &__ch {
@@ -471,14 +474,36 @@
     &__caret {
         display: inline-block;
         width: 2px;
-        height: 11px;
-        margin-left: 1px;
+        height: 14px;
+        margin-left: 2px;
         border-radius: 1px;
         opacity: 0.9;
     }
 
+    /* 名字居左，语义色点（打对/打错/光标）居右作颜色指纹 */
+    &__meta {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        min-width: 0;
+    }
+
+    &__dots {
+        display: inline-flex;
+        gap: 4px;
+        flex: 0 0 auto;
+
+        i {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            border: 1px solid rgba(127, 127, 127, 0.38);
+        }
+    }
+
     &__name {
-        display: block;
+        flex: 1 1 auto;
+        min-width: 0;
         font-size: 11.5px;
         font-weight: 500;
         line-height: 1.4;

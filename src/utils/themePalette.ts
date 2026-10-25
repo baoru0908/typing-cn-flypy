@@ -15,10 +15,12 @@
  * 探针 display:none，不参与布局；单文件版下主题已内嵌，不发任何请求。
  */
 
-import { isColorClash } from '@/utils/color';
+import { contrastRatio, isColorClash, isLightColor } from '@/utils/color';
 
 export interface ThemePalette {
-    /** 面板底色（--home-window-bg-color，可能带透明度） */
+    /** 页面底色（--bg-color，不透明）——卡片最直观的区分色 */
+    bg: string;
+    /** 打字区面板色（--ui-surface，真实界面实际用的变量） */
     panel: string;
     /** 正文色 */
     text: string;
@@ -34,6 +36,8 @@ export interface ThemePalette {
     caret: string;
     /** 当前字底色（--home-input-focus-color，带透明度） */
     current: string;
+    /** 主题名用色：正文色对比不足时兜底成黑/白，保证名字可读 */
+    nameText: string;
 }
 
 /** 主题名 → CSS 文件名（与 themes/index.ts 的 themeKey 规则一致） */
@@ -105,9 +109,14 @@ function injectAll(): boolean {
     if (cssText.size === 0) return false;
 
     // default 排最前当基座：无条件命中，被各主题规则按特异性压过。
-    // 只注入 :root 的声明体，整份文件直接塞会变成非法嵌套规则被浏览器丢弃
+    // 只注入 :root 的声明体，整份文件直接塞会变成非法嵌套规则被浏览器丢弃。
+    // 末尾补 --ui-surface（打字区真实面板色，tokens 在 :root 用 color-mix 定义，
+    // 主题文件没有）——必须在探针元素上用该主题自己的 bg/head-text 现算，
+    // 否则沿 DOM 继承到的是「当前生效主题」的表面色
     const base = rootDecls(cssText.get(DEFAULT_KEY) || '');
-    const parts: string[] = [`:where(${PROBE_HOST}){${base}}`];
+    const surfaceDecl =
+        '--ui-surface: color-mix(in srgb, var(--head-text-color) 5%, var(--bg-color));';
+    const parts: string[] = [`:where(${PROBE_HOST}){${base}\n${surfaceDecl}}`];
     cssText.forEach((css, key) => {
         if (key === DEFAULT_KEY) return;
         const decls = rootDecls(css);
@@ -178,15 +187,31 @@ export function getThemePalette(name: string): ThemePalette | null {
     const cs = getComputedStyle(probe);
     const read = (v: string) => cs.getPropertyValue(v).trim();
 
+    // --ui-surface 是 color-mix() 表达式：自定义属性不会把它求值成颜色，
+    // 读出来只是字符串。借 backgroundColor 让浏览器真正现算；
+    // 算不出来（旧内核不支持 color-mix）回落到页面底色
+    probe.style.backgroundColor = 'var(--ui-surface)';
+    let panel = getComputedStyle(probe).backgroundColor;
+    probe.style.backgroundColor = '';
+    if (!panel || panel === 'rgba(0, 0, 0, 0)') panel = read('--bg-color');
+
     // --home-window-bg-color 有些主题没定义，回落到 --bg-color
-    const panel = read('--home-window-bg-color') || read('--bg-color');
+    const bg = read('--bg-color');
     const text = read('--head-text-color');
     // 取不到正文色说明这套主题的变量没进来，作废
-    if (!panel || !text) return null;
+    if (!panel || !bg || !text) return null;
 
     const primary = read('--primary-color');
     const error = read('--error-color') || read('--monkey-error-color');
+    // 主题名是次要信息，但正文色对比不足（实测 avocado 2.9 / botanical 1.6）
+    // 时名字会糊进卡片底色，按底色明暗兜底成黑/白
+    const nameText = (() => {
+        const cr = contrastRatio(text, bg);
+        if (cr !== null && cr >= 3) return text;
+        return isLightColor(bg) ? '#202124' : '#f2f3f5';
+    })();
     return {
+        bg,
         panel,
         text,
         sub: read('--home-window-text-sub-color'),
@@ -197,6 +222,7 @@ export function getThemePalette(name: string): ThemePalette | null {
         success: read('--success-color') || primary,
         caret: read('--monkey-caret-color') || primary,
         current: read('--home-input-focus-color'),
+        nameText,
     };
 }
 

@@ -76,6 +76,25 @@ export function deltaE(a: string, b: string): number {
     return Math.hypot(la[0] - lb[0], la[1] - lb[1], la[2] - lb[2]);
 }
 
+/** WCAG 相对亮度；解析不了返回 null */
+function luminance(color: string): number | null {
+    const rgb = toRgb(color);
+    if (!rgb) return null;
+    const [r, g, b] = rgb.map(srgbToLinear);
+    return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+}
+
+/**
+ * WCAG 对比度（1~21）。小字（<18px）读得清至少要 4.5，
+ * 主题卡上的名字是次要信息，低于 3 就该换兜底色。
+ */
+export function contrastRatio(a: string, b: string): number | null {
+    const la = luminance(a);
+    const lb = luminance(b);
+    if (la === null || lb === null) return null;
+    return (Math.max(la, lb) + 0.05) / (Math.min(la, lb) + 0.05);
+}
+
 /**
  * 强调色与错误色是否近到无法区分。
  * 实测全部 40 套主题的 ΔE：nothing / nothing-dark = 0，

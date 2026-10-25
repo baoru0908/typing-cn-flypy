@@ -404,10 +404,14 @@ const Header: React.FC<MapState & MapDispatch> = (props) => {
                                 {group.items.map((theme) => {
                                     const p = palettes[theme.name];
                                     // 色板未就绪时回落到静态两字段，至少不是空白卡片
+                                    // 卡片底色用不透明的页面底色：面板色多为半透明，
+                                    // 直接当卡底会被模态框自己的底色透出来，主题区分不开
+                                    const bg = p?.bg || theme.bgColor;
                                     const panel = p?.panel || theme.bgColor;
                                     const text = p?.text || theme.textColor;
                                     const primary = p?.primary || theme.textColor;
                                     const error = p?.error || theme.textColor;
+                                    const caret = p?.caret || primary;
                                     const current = p?.current || withAlpha(primary, 0.16);
                                     return (
                                         <button
@@ -418,12 +422,17 @@ const Header: React.FC<MapState & MapDispatch> = (props) => {
                                             }`}
                                             key={theme.name}
                                             onClick={() => themeBlockClick(theme)}
-                                            style={{ background: panel }}
+                                            style={{ background: bg }}
+                                            title={theme.name}
                                         >
-                                            <span className="theme-card__preview">
+                                            {/* 面板条：半透明面板叠在真实页面底色上，
+                                                复现「打开练习页」的第一眼观感 */}
+                                            <span
+                                                className="theme-card__preview"
+                                                style={{ background: panel }}
+                                            >
                                                 {/* 一行打字预览：打对 / 当前字 / 打错，
-                                                    用该主题真实的三色，比抽象色条更能
-                                                    反映这套主题实际练起来的样子。
+                                                    用该主题真实的三色。
                                                     字符必须各自包在 <i> 里：
                                                     裸文本 + 换行会被 JSX 渲染成空格，
                                                     把四个字拉开成「打 一 字 练」。 */}
@@ -458,15 +467,26 @@ const Header: React.FC<MapState & MapDispatch> = (props) => {
                                                     {/* 光标：与真实界面同色同形的竖线 */}
                                                     <i
                                                         className="theme-card__caret"
-                                                        style={{ background: p?.caret || primary }}
+                                                        style={{ background: caret }}
                                                     />
                                                 </span>
                                             </span>
-                                            <span
-                                                className="theme-card__name"
-                                                style={{ color: text }}
-                                            >
-                                                {theme.name}
+                                            {/* 名字 + 语义色点：色点是这套主题的
+                                                「指纹」，扫一眼就能分清两套近似主题 */}
+                                            <span className="theme-card__meta">
+                                                <span
+                                                    className="theme-card__name"
+                                                    style={{ color: p?.nameText || text }}
+                                                >
+                                                    {theme.name}
+                                                </span>
+                                                {p && (
+                                                    <span className="theme-card__dots">
+                                                        <i style={{ background: primary }} />
+                                                        <i style={{ background: error }} />
+                                                        <i style={{ background: caret }} />
+                                                    </span>
+                                                )}
                                             </span>
                                         </button>
                                     );

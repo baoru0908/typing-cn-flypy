@@ -10,11 +10,11 @@
     --typing-code-font: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
 
     --primary-color: #f8cc2a;
-    --success-color: inherit;
-    --error-color: #6c3b7b;
+    --home-window-bg-color: #4a2a5c;
+    --error-color: #ff8f8f;
+    --success-color: #8fd4a8;
     --bg-color: #6c3b7b;
     --head-text-color: #f8cc2a;
-    --home-window-bg-color: #1a8ab7;
     --home-window-text-color: #f8cc2a;
     --success-opacity: .3;
     --home-countdown-bg-color: #f8cc2a;

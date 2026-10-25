@@ -436,26 +436,48 @@
     &__preview {
         display: flex;
         flex-direction: column;
-        gap: 5px;
+        gap: 6px;
         margin-bottom: 12px;
     }
 
-    &__line {
+    /* 打字行预览：直接摆四个汉字，用该主题真实的「打对/当前字/打错」三色，
+       比抽象色条更能反映这套主题实际练起来的样子 */
+    &__row {
+        display: flex;
+        align-items: center;
+        gap: 1px;
+        height: 26px;
+        padding: 0 2px;
+        border-radius: 6px;
+        /* 底色由 JS 用 --home-window-bg-color 注入到卡片上 */
+        font-size: 16px;
+        line-height: 1;
+        letter-spacing: 0.02em;
+        opacity: 0.92;
+    }
+
+    /* 当前字：底色由 JS 注入，这里只补圆角让高亮块成形 */
+    &__ch {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 1em;
+        font-style: normal;
+
+        &.is-current {
+            padding: 3px 1px;
+            border-radius: 3px;
+        }
+    }
+
+    /* 光标：与真实界面同色同形的竖线 */
+    &__caret {
         display: block;
-        width: 62%;
-        height: 3px;
-        border-radius: 2px;
-        opacity: 0.4;
-
-        &.is-strong {
-            width: 86%;
-            height: 4px;
-            opacity: 1;
-        }
-
-        &.is-short {
-            width: 42%;
-        }
+        width: 2px;
+        height: 11px;
+        margin-left: 2px;
+        border-radius: 1px;
+        opacity: 0.85;
     }
 
     &__name {

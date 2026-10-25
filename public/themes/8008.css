@@ -10,11 +10,12 @@
     --typing-code-font: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
 
     --primary-color: #f44c7f;
-    --success-color: #fff;
-    --error-color: #f44c7f;
+    --home-window-bg-color: #333a45;
+    --error-color: #ff8f8f;
+    --success-color: #8fd4a8;
+    --monkey-error-color: #ff8f8f;
     --bg-color: #333a45; 
     --head-text-color: #9faaba;
-    --home-window-bg-color: #939eae;
     --home-window-text-color: #333a45;
     --home-countdown-bg-color: #939eae;
     --home-countdown-text-color: #333a45;
@@ -22,5 +23,4 @@
     --home-reload-btn-text-color: #fff;
     --word-count-checked-color: #f44c7f;
     --monkey-caret-color: #f44c7f;
-    --monkey-error-color: #9D0500;
 }

@@ -62,8 +62,16 @@ for (const file of FS.readdirSync(THEMES_DIR)) {
     };
     const bg = getVar('bg-color');
     if (!isHex(bg)) continue;
-    // 打字区光标/面板强调色实际画在面板底色上，而不是页面 bg-color 上
-    const panelRaw = getVar('typing-panel-bg-color') || getVar('home-window-bg-color');
+    // 打字区光标/面板强调色实际画在面板底色上，而不是页面 bg-color 上。
+    // typing-panel-bg-color 的值恒为 var(--home-window-bg-color)（40 套全是），
+    // 直接读它拿到的是变量引用、isHex 判假，面板色就静默回落成了 bg-color。
+    // 这里先解析一层 var() 引用，否则对面板的对比度检查一直是错的。
+    const resolveVar = (v) => {
+        if (!v) return v;
+        const m = /^var\(--([\w-]+)\)$/.exec(v.trim());
+        return m ? getVar(m[1]) : v;
+    };
+    const panelRaw = resolveVar(getVar('typing-panel-bg-color')) || getVar('home-window-bg-color');
     const panel = isHex(panelRaw) ? panelRaw : bg;
 
     const edits = [];
@@ -82,6 +90,13 @@ for (const file of FS.readdirSync(THEMES_DIR)) {
         if (fixed) edits.push([name, v, fixed]);
     }
     for (const name of ['monkey-caret-color']) {
+        const v = getVar(name);
+        if (!isHex(v)) continue;
+        const fixed = solve(v, panel, ACCENT_MIN);
+        if (fixed) edits.push([name, v, fixed]);
+    }
+    // 打错/打对色画在打字区面板上（主题预览卡同样画在面板底色上），对 panel 达标
+    for (const name of ['error-color', 'success-color']) {
         const v = getVar(name);
         if (!isHex(v)) continue;
         const fixed = solve(v, panel, ACCENT_MIN);

@@ -362,9 +362,7 @@ const Monkey: React.FC<MapState & MapDispatch> = (props) => {
 
     const activeWordIndex = coordinateRef.current[0];
     const tipText =
-        inputMode === '2'
-            ? '两键一字，打满自动上词 · 空格也可上词'
-            : '输入完整拼音后按空格上词';
+        inputMode === '2' ? '两键一字，打满自动上词 · 空格也可上词' : '输入完整拼音后按空格上词';
 
     return (
         <div className="Monkey page">
@@ -485,9 +483,7 @@ const Monkey: React.FC<MapState & MapDispatch> = (props) => {
                                                     offset += group.code.length;
                                                     const done =
                                                         letters.length > 0 &&
-                                                        letters.every(
-                                                            (l) => l.isCorrect === true
-                                                        );
+                                                        letters.every((l) => l.isCorrect === true);
                                                     const bad = letters.some(
                                                         (l) => l.isCorrect === false
                                                     );

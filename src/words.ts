@@ -298,7 +298,7 @@ const defaultWords: Word[] = [
     },
     {
         label: '铝锭',
-        text: 'lvding',
+        text: 'lüding',
     },
     {
         label: '注塑',
@@ -558,7 +558,7 @@ const defaultWords: Word[] = [
     },
     {
         label: '绿洲',
-        text: 'lvzhou',
+        text: 'lüzhou',
     },
     {
         label: '标本',
@@ -799,6 +799,634 @@ const defaultWords: Word[] = [
     {
         label: '工作室',
         text: 'gongzuoshi',
+    },
+    {
+        label: '快银轴',
+        text: 'kuaiyinzhou',
+    },
+    {
+        label: '磁轴',
+        text: 'cizhou',
+    },
+    {
+        label: '灰木轴',
+        text: 'huimuzhou',
+    },
+    {
+        label: '天空轴',
+        text: 'tiankongzhou',
+    },
+    {
+        label: '牛油果',
+        text: 'niuyouguo',
+    },
+    {
+        label: '奶油轴',
+        text: 'naiyouzhou',
+    },
+    {
+        label: '赤瞳轴',
+        text: 'chitongzhou',
+    },
+    {
+        label: '黄金轴',
+        text: 'huangjinzhou',
+    },
+    {
+        label: '白菜轴',
+        text: 'baicaizhou',
+    },
+    {
+        label: '豆腐轴',
+        text: 'doufuzhou',
+    },
+    {
+        label: '线性轴',
+        text: 'xianxingzhou',
+    },
+    {
+        label: '段落轴',
+        text: 'duanluozhou',
+    },
+    {
+        label: '静音轴',
+        text: 'jingyinzhou',
+    },
+    {
+        label: '提前触底',
+        text: 'tiqianchudi',
+    },
+    {
+        label: '触底行程',
+        text: 'chudixingcheng',
+    },
+    {
+        label: '初始压力',
+        text: 'chushiyali',
+    },
+    {
+        label: '触发压力',
+        text: 'chufayali',
+    },
+    {
+        label: '总行程',
+        text: 'zonghangcheng',
+    },
+    {
+        label: '弹簧音',
+        text: 'tanhuangyin',
+    },
+    {
+        label: '厂润',
+        text: 'changrun',
+    },
+    {
+        label: '个人润',
+        text: 'gerenrun',
+    },
+    {
+        label: '厚润',
+        text: 'hourun',
+    },
+    {
+        label: '薄膜',
+        text: 'baomo',
+    },
+    {
+        label: '声音包',
+        text: 'shengyinbao',
+    },
+    {
+        label: '夹心棉',
+        text: 'jiaxinmian',
+    },
+    {
+        label: '底棉',
+        text: 'dimian',
+    },
+    {
+        label: '轴下垫',
+        text: 'zhouxiadian',
+    },
+    {
+        label: '声优垫',
+        text: 'shengyoudian',
+    },
+    {
+        label: '开槽',
+        text: 'kaicao',
+    },
+    {
+        label: '原厂高度',
+        text: 'yuanchanggaodu',
+    },
+    {
+        label: '球帽',
+        text: 'qiumao',
+    },
+    {
+        label: '平帽',
+        text: 'pingmao',
+    },
+    {
+        label: '二色成型',
+        text: 'ersechengxing',
+    },
+    {
+        label: '激光雕刻',
+        text: 'jiguangdiaoke',
+    },
+    {
+        label: '五面热升华',
+        text: 'wumianreshenghua',
+    },
+    {
+        label: '侧刻',
+        text: 'ceke',
+    },
+    {
+        label: '正刻',
+        text: 'zhengke',
+    },
+    {
+        label: '无刻',
+        text: 'wuke',
+    },
+    {
+        label: '暗刻',
+        text: 'anke',
+    },
+    {
+        label: '字体包',
+        text: 'zitibao',
+    },
+    {
+        label: '字根',
+        text: 'zigen',
+    },
+    {
+        label: '适配器',
+        text: 'shipeiqi',
+    },
+    {
+        label: '增补',
+        text: 'zengbu',
+    },
+    {
+        label: '客制化',
+        text: 'kezhihua',
+    },
+    {
+        label: '量产键盘',
+        text: 'liangchanjianpan',
+    },
+    {
+        label: '公模',
+        text: 'gongmo',
+    },
+    {
+        label: '私模',
+        text: 'simo',
+    },
+    {
+        label: '船壳',
+        text: 'chuanke',
+    },
+    {
+        label: '上下盖',
+        text: 'shangxiagai',
+    },
+    {
+        label: '板簧',
+        text: 'banhuang',
+    },
+    {
+        label: '定位板',
+        text: 'dingweiban',
+    },
+    {
+        label: '黄铜定位',
+        text: 'huangtongdingwei',
+    },
+    {
+        label: '铝定位',
+        text: 'lüdingwei',
+    },
+    {
+        label: '碳纤定位',
+        text: 'tanxiandingwei',
+    },
+    {
+        label: '开槽定位',
+        text: 'kaicaodingwei',
+    },
+    {
+        label: '沉金',
+        text: 'chenjin',
+    },
+    {
+        label: '内胆',
+        text: 'neidan',
+    },
+    {
+        label: '外壳',
+        text: 'waike',
+    },
+    {
+        label: '阳极氧化',
+        text: 'yangjiyanghua',
+    },
+    {
+        label: '电泳漆',
+        text: 'dianyongqi',
+    },
+    {
+        label: '微喷',
+        text: 'weipen',
+    },
+    {
+        label: '水转印',
+        text: 'shuizhuanyin',
+    },
+    {
+        label: '拉丝',
+        text: 'lasi',
+    },
+    {
+        label: '喷砂',
+        text: 'pensha',
+    },
+    {
+        label: '三模连接',
+        text: 'sanmolianjie',
+    },
+    {
+        label: '有线模式',
+        text: 'youxianmoshi',
+    },
+    {
+        label: '蓝牙模式',
+        text: 'lanyamoshi',
+    },
+    {
+        label: '无线延迟',
+        text: 'wuxianyanchi',
+    },
+    {
+        label: '回报率',
+        text: 'huibaolü',
+    },
+    {
+        label: '全键无冲',
+        text: 'quanjianwuchong',
+    },
+    {
+        label: '六键无冲',
+        text: 'liujianwuchong',
+    },
+    {
+        label: '电池容量',
+        text: 'dianchirongliang',
+    },
+    {
+        label: '续航时间',
+        text: 'xuhangshijian',
+    },
+    {
+        label: '休眠策略',
+        text: 'xiumiancelüe',
+    },
+    {
+        label: '固件升级',
+        text: 'gujianshengji',
+    },
+    {
+        label: '驱动软件',
+        text: 'qudongruanjian',
+    },
+    {
+        label: '宏定义',
+        text: 'hongdingyi',
+    },
+    {
+        label: '宏录制',
+        text: 'hongluzhi',
+    },
+    {
+        label: '层切换',
+        text: 'cengqiehuan',
+    },
+    {
+        label: '阿米洛',
+        text: 'amiluo',
+    },
+    {
+        label: '斐尔可',
+        text: 'feierke',
+    },
+    {
+        label: '利奥博德',
+        text: 'liaobode',
+    },
+    {
+        label: '鸭子厂',
+        text: 'yazichang',
+    },
+    {
+        label: '龙豆',
+        text: 'longdou',
+    },
+    {
+        label: '客制化圈子',
+        text: 'kezhihuaquanzi',
+    },
+    {
+        label: '团长',
+        text: 'tuanzhang',
+    },
+    {
+        label: '开车团',
+        text: 'kaichetuan',
+    },
+    {
+        label: '拼团',
+        text: 'pintuan',
+    },
+    {
+        label: '现货',
+        text: 'xianhuo',
+    },
+    {
+        label: '期货',
+        text: 'qihuo',
+    },
+    {
+        label: '排单',
+        text: 'paidan',
+    },
+    {
+        label: '工期',
+        text: 'gongqi',
+    },
+    {
+        label: '翻车',
+        text: 'fanche',
+    },
+    {
+        label: '售后',
+        text: 'shouhou',
+    },
+    {
+        label: '质保',
+        text: 'zhibao',
+    },
+    {
+        label: '返修',
+        text: 'fanxiu',
+    },
+    {
+        label: '以旧换新',
+        text: 'yijiuhuanxin',
+    },
+    {
+        label: '上车',
+        text: 'shangche',
+    },
+    {
+        label: '下车',
+        text: 'xiache',
+    },
+    {
+        label: '抄作业',
+        text: 'chaozuoye',
+    },
+    {
+        label: '闭眼入',
+        text: 'biyanru',
+    },
+    {
+        label: '踩坑',
+        text: 'caikeng',
+    },
+    {
+        label: '真香',
+        text: 'zhenxiang',
+    },
+    {
+        label: '后悔',
+        text: 'houhui',
+    },
+    {
+        label: '纠结',
+        text: 'jiujie',
+    },
+    {
+        label: '凑合用',
+        text: 'couheyong',
+    },
+    {
+        label: '毕业',
+        text: 'biye',
+    },
+    {
+        label: '神价',
+        text: 'shenjia',
+    },
+    {
+        label: '骨折价',
+        text: 'guzhejia',
+    },
+    {
+        label: '韭菜',
+        text: 'jiucai',
+    },
+    {
+        label: '智商税',
+        text: 'zhishangshui',
+    },
+    {
+        label: '性价比',
+        text: 'xingjiabi',
+    },
+    {
+        label: '信仰充值',
+        text: 'xinyangchongzhi',
+    },
+    {
+        label: '钱包减肥',
+        text: 'qianbaojianfei',
+    },
+    {
+        label: '盲打',
+        text: 'mangda',
+    },
+    {
+        label: '指法',
+        text: 'zhifa',
+    },
+    {
+        label: '手速',
+        text: 'shousu',
+    },
+    {
+        label: '击键',
+        text: 'jijian',
+    },
+    {
+        label: '连击',
+        text: 'lianji',
+    },
+    {
+        label: '节奏感',
+        text: 'jiezougan',
+    },
+    {
+        label: '肌肉记忆',
+        text: 'jiroujiyi',
+    },
+    {
+        label: '手指跨度',
+        text: 'shouzhikuadu',
+    },
+    {
+        label: '手腕悬空',
+        text: 'shouwanxuankong',
+    },
+    {
+        label: '打字音',
+        text: 'daziyin',
+    },
+    {
+        label: '麻将音',
+        text: 'majiangyin',
+    },
+    {
+        label: '雨滴音',
+        text: 'yudiyin',
+    },
+    {
+        label: '石子音',
+        text: 'shiziyin',
+    },
+    {
+        label: '脆响',
+        text: 'cuixiang',
+    },
+    {
+        label: '闷响',
+        text: 'menxiang',
+    },
+    {
+        label: '空腔音',
+        text: 'kongqiangyin',
+    },
+    {
+        label: '调音',
+        text: 'tiaoyin',
+    },
+    {
+        label: '人体工学',
+        text: 'rentigongxue',
+    },
+    {
+        label: '倾斜角度',
+        text: 'qingxiejiaodu',
+    },
+    {
+        label: '掌托',
+        text: 'zhangtuo',
+    },
+    {
+        label: '手托',
+        text: 'shoutuo',
+    },
+    {
+        label: '腕托',
+        text: 'wantuo',
+    },
+    {
+        label: '分体键盘',
+        text: 'fentijianpan',
+    },
+    {
+        label: '紧凑配列',
+        text: 'jincoupeilie',
+    },
+    {
+        label: '九宫格',
+        text: 'jiugongge',
+    },
+    {
+        label: '小键盘',
+        text: 'xiaojianpan',
+    },
+    {
+        label: '功能区',
+        text: 'gongnengqu',
+    },
+    {
+        label: '编辑区',
+        text: 'bianjiqu',
+    },
+    {
+        label: '方向键',
+        text: 'fangxiangjian',
+    },
+    {
+        label: '配列',
+        text: 'peilie',
+    },
+    {
+        label: '键位数',
+        text: 'jianweishu',
+    },
+    {
+        label: '改键',
+        text: 'gaijian',
+    },
+    {
+        label: '刷固件',
+        text: 'shuagujian',
+    },
+    {
+        label: '写配置',
+        text: 'xiepeizhi',
+    },
+    {
+        label: '键位映射',
+        text: 'jianweiyingshe',
+    },
+    {
+        label: '组合键',
+        text: 'zuhejian',
+    },
+    {
+        label: '快捷键',
+        text: 'kuaijiejian',
+    },
+    {
+        label: '长按',
+        text: 'changan',
+    },
+    {
+        label: '双击触发',
+        text: 'shuangjichufa',
+    },
+    {
+        label: '轻点触发',
+        text: 'qingdianchufa',
+    },
+    {
+        label: '磁轴灵敏度',
+        text: 'cizhoulingmindu',
+    },
+    {
+        label: '快速触发',
+        text: 'kuaisuchufa',
+    },
+    {
+        label: '连续触发',
+        text: 'lianxuchufa',
     },
 ];
 

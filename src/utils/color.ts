@@ -85,3 +85,33 @@ export function deltaE(a: string, b: string): number {
  */
 export const isColorClash = (a: string, b: string, threshold = 25): boolean =>
     !!a && !!b && deltaE(a, b) < threshold;
+
+/**
+ * 任意颜色合成「带透明度的同色」，用于在色板上叠半透明层。
+ * alpha 缺省 0.16；解析不了就退回 rgba(128,128,128,.16) 灰色，不会让色板掉块。
+ */
+export function withAlpha(color: string, alpha = 0.16): string {
+    const rgb = color.startsWith('#') ? hexToRgb(color) : null;
+    if (!rgb) {
+        const m = (color || '').match(/(\d+)[,\s]+(\d+)[,\s]+(\d+)/);
+        if (!m) return `rgba(128,128,128,${alpha})`;
+        return `rgba(${Number(m[1])},${Number(m[2])},${Number(m[3])},${alpha})`;
+    }
+    return `rgba(${rgb[0]},${rgb[1]},${rgb[2]},${alpha})`;
+}
+
+function hexToRgb(hex: string): [number, number, number] | null {
+    let h = hex.slice(1);
+    if (h.length === 3) {
+        h = h
+            .split('')
+            .map((x) => x + x)
+            .join('');
+    }
+    if (h.length < 6) return null;
+    const r = parseInt(h.slice(0, 2), 16);
+    const g = parseInt(h.slice(2, 4), 16);
+    const b = parseInt(h.slice(4, 6), 16);
+    if ([r, g, b].some(Number.isNaN)) return null;
+    return [r, g, b];
+}

@@ -10,6 +10,8 @@
     --typing-code-font: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
 
     --primary-color: #ffffb1;
+    --error-color: #d44646;
+    --success-color: #478656;
     --bg-color: #6A97B5;
     --head-text-color: #0d1922;
     --home-window-bg-color: #eae3d5;
@@ -18,5 +20,5 @@
     --home-reload-btn-bg-color: #faee69;
     --home-reload-btn-text-color: #575d5e;
     --word-count-checked-color: #ffffb1;
-    --monkey-caret-color: #ffffb1;
+    --monkey-caret-color: #7b7b2d;
 }

@@ -10,6 +10,8 @@
     --typing-code-font: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
 
     --primary-color: #bfcf23;
+    --error-color: #ffa6a6;
+    --success-color: #97d757;
     --bg-color: #3d3e3d;
     --head-text-color: #bfcf23;
     --home-window-bg-color: #666;

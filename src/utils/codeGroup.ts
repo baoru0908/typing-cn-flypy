@@ -25,9 +25,7 @@ export function buildCharGroups(label: string, code: string, inputMode: string):
         });
         if (sylArr.length === chars.length) {
             const codes = sylArr.map((syl) =>
-                inputMode === '2'
-                    ? toFlypy(syl)
-                    : syl.replace(/[^a-zA-Z]/g, '').toLowerCase()
+                inputMode === '2' ? toFlypy(syl) : syl.replace(/[^a-zA-Z]/g, '').toLowerCase()
             );
             const valid = codes.every((c) => c.length > 0) && codes.join('') === code;
             if (valid) {

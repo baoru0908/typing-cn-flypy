@@ -7,12 +7,15 @@
  * --monkey-caret-color（光标）、--home-window-bg-color（面板，常带透明度）。
  * 用静态两字段画预览，40 套主题会长得几乎一样，选色失去依据。
  *
- * 做法：主题面板打开时一次性 fetch 全部主题 CSS 文本，注入一个离屏
- * <style>，规则统一写成 :where(.tp-host[data-t="<key>"])——同特异性，
- * 靠源序决定胜负，default 排最前当基座，因此既能让目标主题盖过基座，
+ * 做法：主题面板打开时一次性 fetch 全部主题 CSS 文本，抽出其中 :root 块的
+ * 声明体，注入一个离屏 <style>——default 统一写成 :where(.tp-host)，其余主题
+ * 写成 .tp-host[data-t="<key>"]。同文件靠特异性分层：基座 (0,0,0) 无条件命中，
+ * 主题 (0,2,0) 只命中被预览的那套，因此既能让目标主题盖过基座，
  * 又能让基座补上该主题没声明的变量，复现真实页面的层叠结果。
  * 探针 display:none，不参与布局；单文件版下主题已内嵌，不发任何请求。
  */
+
+import { isColorClash } from '@/utils/color';
 
 export interface ThemePalette {
     /** 面板底色（--home-window-bg-color，可能带透明度） */
@@ -21,7 +24,7 @@ export interface ThemePalette {
     text: string;
     /** 次级文字（--home-window-text-sub-color，可能带透明度） */
     sub: string;
-    /** 强调色 = 打对 */
+    /** 强调色 = 打对（撞色主题下已退回正文色） */
     primary: string;
     /** 错误色 = 打错 */
     error: string;
@@ -44,6 +47,34 @@ const PROBE_HOST = '.tp-host';
 
 /** 单文件版：pack-single.js 把全部主题塞进 window.__THEMES__（键为 css 文件名） */
 const embeddedThemes = (): Record<string, string> => (window as any).__THEMES__ || {};
+
+/**
+ * 抽出主题 CSS 里所有 :root { ... } 块的声明体。
+ *
+ * 为什么不能把整个文件直接塞进选择器：主题文件的变量都在 :root 里，
+ * 写成 .tp-host[data-t=K]{ :root{...} } 是嵌套规则，普通 CSS 不支持，
+ * 浏览器整条丢弃——探针一个变量都拿不到，只能沿 DOM 继承 <html> 上
+ * 当前生效主题的值，39 张卡片全部显示同一个颜色（线上真实踩过）。
+ * 所以必须把 :root 的声明体剥出来，直接挂到探针选择器下。
+ */
+function rootDecls(css: string): string {
+    const out: string[] = [];
+    const re = /(^|[\s,}]):root\b\s*\{/g;
+    let m: RegExpExecArray | null;
+    while ((m = re.exec(css))) {
+        let i = m.index + m[0].length;
+        let depth = 1;
+        const start = i;
+        while (i < css.length && depth > 0) {
+            const ch = css[i];
+            if (ch === '{') depth++;
+            else if (ch === '}') depth--;
+            i++;
+        }
+        if (depth === 0) out.push(css.slice(start, i - 1));
+    }
+    return out.join('\n');
+}
 
 /** 已拿到的 CSS 文本：key → 文本 */
 const cssText = new Map<string, string>();
@@ -73,12 +104,15 @@ function injectAll(): boolean {
     if (injected) return true;
     if (cssText.size === 0) return false;
 
-    // default 排最前当基座：无条件命中，被各主题规则按特异性压过
-    const base = cssText.get(DEFAULT_KEY) || '';
+    // default 排最前当基座：无条件命中，被各主题规则按特异性压过。
+    // 只注入 :root 的声明体，整份文件直接塞会变成非法嵌套规则被浏览器丢弃
+    const base = rootDecls(cssText.get(DEFAULT_KEY) || '');
     const parts: string[] = [`:where(${PROBE_HOST}){${base}}`];
     cssText.forEach((css, key) => {
         if (key === DEFAULT_KEY) return;
-        parts.push(`${PROBE_HOST}[data-t="${key}"]{${css}}`);
+        const decls = rootDecls(css);
+        if (!decls) return;
+        parts.push(`${PROBE_HOST}[data-t="${key}"]{${decls}}`);
     });
 
     const style = document.createElement('style');
@@ -151,12 +185,15 @@ export function getThemePalette(name: string): ThemePalette | null {
     if (!panel || !text) return null;
 
     const primary = read('--primary-color');
+    const error = read('--error-color') || read('--monkey-error-color');
     return {
         panel,
         text,
         sub: read('--home-window-text-sub-color'),
-        primary,
-        error: read('--error-color') || read('--monkey-error-color'),
+        // 撞色主题（nothing / nothing dark）运行时红色专用于打错，
+        // 「打对」退回亮度表达——预览与真实打字界面保持一致
+        primary: isColorClash(primary, error) ? text : primary,
+        error,
         success: read('--success-color') || primary,
         caret: read('--monkey-caret-color') || primary,
         current: read('--home-input-focus-color'),

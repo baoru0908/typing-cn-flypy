@@ -1,0 +1,39 @@
+/* rose pine dawn 主题 */
+:root {
+    --typing-panel-bg-color: var(--home-window-bg-color);
+    --typing-panel-border-color: transparent;
+    --typing-text-color: var(--head-text-color);
+    --typing-correct-color: var(--primary-color);
+    --typing-error-color: var(--monkey-error-color);
+    --typing-error-bg-color: rgba(245, 34, 45, 0.14);
+    --typing-current-bg-color: var(--home-input-focus-color);
+    --typing-caret-color: var(--monkey-caret-color);
+    --typing-code-font: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+    --primary-color: #907aa9;
+    --success-color: #56949f;
+    --error-color: #b4637a;
+    --bg-color: #faf4ed;
+    --head-text-color: #575279;
+    --home-window-bg-color: rgba(255, 250, 243, 0.85);
+    --home-window-text-color: #575279;
+    --home-window-text-sub-color: rgba(87, 82, 121, 0.6);
+    --home-window-text-acting-bg-color: rgba(144, 122, 169, 0.16);
+    --home-input-focus-color: rgba(144, 122, 169, 0.12);
+    --home-countdown-bg-color: rgba(242, 233, 222, 0.9);
+    --home-countdown-text-color: #575279;
+    --home-reload-btn-bg-color: rgba(144, 122, 169, 0.78);
+    --home-reload-btn-focus-color: rgba(144, 122, 169, 0.16);
+    --home-reload-btn-text-color: #faf4ed;
+    --word-count-checked-color: #907aa9;
+    --monkey-caret-color: #907aa9;
+    --monkey-sub-color: rgba(152, 147, 165, 0.9);
+    --monkey-error-color: #b4637a;
+}
+
+body {
+    --body-back-image: linear-gradient(160deg, #f2e9de 0%, #faf4ed 55%, #fffaf3 100%);
+}
+
+.TypingArea__text {
+    border-color: rgba(144, 122, 169, 0.2);
+}

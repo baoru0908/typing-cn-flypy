@@ -1,0 +1,24 @@
+:root {
+    --typing-panel-bg-color: var(--home-window-bg-color);
+    --typing-panel-border-color: transparent;
+    --typing-text-color: var(--head-text-color);
+    --typing-correct-color: var(--primary-color);
+    --typing-error-color: var(--monkey-error-color);
+    --typing-error-bg-color: rgba(245, 34, 45, 0.14);
+    --typing-current-bg-color: var(--home-input-focus-color);
+    --typing-caret-color: var(--monkey-caret-color);
+    --typing-code-font: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+
+    --primary-color: #bfcf23;
+    --error-color: #ffa6a6;
+    --success-color: #97d757;
+    --bg-color: #3d3e3d;
+    --head-text-color: #bfcf23;
+    --home-window-bg-color: #666;
+    --home-window-text-color: #bfcf23;
+    --home-countdown-text-color: #bfcf23;
+    --home-reload-btn-bg-color: #666;
+    --home-reload-btn-text-color: #bfcf23;
+    --word-count-checked-color: #fffffe;
+    --monkey-caret-color: #bfcf23;
+}

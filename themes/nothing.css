@@ -1,0 +1,58 @@
+/* nothing 主题（亮色）：按 Nothing 设计语言参考手册
+ * Foundation：Pure Black #000000 / Window Grey #B1B3B3 / N-Grey #DCD7D2 / Pure White #FFFFFF
+ * Primary：N-Red #C8102E（选中态）
+ * 规范：禁渐变、禁投影，主色只用于强调（选中、光标、正确字符）
+ */
+:root {
+    --typing-panel-bg-color: var(--home-window-bg-color);
+    --typing-panel-border-color: transparent;
+    --typing-text-color: var(--head-text-color);
+    --typing-correct-color: var(--primary-color);
+    --typing-error-color: var(--monkey-error-color);
+    --typing-error-bg-color: rgba(245, 34, 45, 0.14);
+    --typing-current-bg-color: var(--home-input-focus-color);
+    --typing-caret-color: var(--monkey-caret-color);
+    --typing-code-font: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+
+    /* 全局主色 */
+    --primary-color: #c8102e;
+    /* 成功色 */
+    --success-color: #c8102e;
+    /* 错误色 */
+    --error-color: #c8102e;
+
+    --bg-color: #f4f3f1;
+    --head-text-color: #000000;
+
+    --home-window-bg-color: #ffffff;
+    --home-window-text-color: #000000;
+    --home-window-text-sub-color: #b1b3b3;
+    --home-window-text-acting-bg-color: rgba(0, 0, 0, 0.08);
+    --success-opacity: inherit;
+    --error-opacity: inherit;
+
+    --home-input-focus-color: rgba(0, 0, 0, 0.06);
+    --home-countdown-bg-color: #dcd7d2;
+    --home-countdown-text-color: #000000;
+    --home-reload-btn-bg-color: #dcd7d2;
+    --home-reload-btn-focus-color: rgba(0, 0, 0, 0.08);
+    --home-reload-btn-text-color: #000000;
+
+    --word-count-checked-color: #c8102e;
+    --monkey-caret-color: #c8102e;
+    --monkey-sub-color: #b1b3b3;
+    --monkey-error-color: #c8102e;
+}
+
+/* 亮色 nothing：去掉阴影，仅保留平面与分隔 */
+.app-header {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+    background-color: transparent;
+    box-shadow: none;
+}
+
+.Monkey .word-count-radio .ant-radio-button-wrapper,
+.Code .code-lang-radio .ant-radio-button-wrapper,
+.English .word-count-radio .ant-radio-button-wrapper {
+    background-color: transparent;
+}

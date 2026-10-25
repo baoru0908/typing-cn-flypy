@@ -1,0 +1,1 @@
+System.register(["./index-legacy.d4e7b63b.js"],(function(e){"use strict";var n;return{setters:[function(e){n=e.p}],execute:function(){e("getPinyin",(function(e){return n(e,{toneType:"none",v:!0}).replace(/ /g,"")}))}}}));

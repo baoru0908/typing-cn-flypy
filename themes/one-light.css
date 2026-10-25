@@ -1,0 +1,39 @@
+/* one light 主题 */
+:root {
+    --typing-panel-bg-color: var(--home-window-bg-color);
+    --typing-panel-border-color: transparent;
+    --typing-text-color: var(--head-text-color);
+    --typing-correct-color: var(--primary-color);
+    --typing-error-color: var(--monkey-error-color);
+    --typing-error-bg-color: rgba(245, 34, 45, 0.14);
+    --typing-current-bg-color: var(--home-input-focus-color);
+    --typing-caret-color: var(--monkey-caret-color);
+    --typing-code-font: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+    --primary-color: #4078f2;
+    --success-color: #50a14f;
+    --error-color: #e45649;
+    --bg-color: #fafafa;
+    --head-text-color: #383a42;
+    --home-window-bg-color: rgba(255, 255, 255, 0.88);
+    --home-window-text-color: #383a42;
+    --home-window-text-sub-color: rgba(56, 58, 66, 0.6);
+    --home-window-text-acting-bg-color: rgba(64, 120, 242, 0.12);
+    --home-input-focus-color: rgba(64, 120, 242, 0.1);
+    --home-countdown-bg-color: rgba(234, 234, 236, 0.9);
+    --home-countdown-text-color: #383a42;
+    --home-reload-btn-bg-color: rgba(64, 120, 242, 0.82);
+    --home-reload-btn-focus-color: rgba(64, 120, 242, 0.14);
+    --home-reload-btn-text-color: #ffffff;
+    --word-count-checked-color: #4078f2;
+    --monkey-caret-color: #4078f2;
+    --monkey-sub-color: rgba(160, 162, 170, 0.9);
+    --monkey-error-color: #e45649;
+}
+
+body {
+    --body-back-image: linear-gradient(160deg, #f0f0f2 0%, #fafafa 55%, #eaeaec 100%);
+}
+
+.TypingArea__text {
+    border-color: rgba(64, 120, 242, 0.18);
+}
